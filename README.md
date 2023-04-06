@@ -9,5 +9,10 @@ Contributors:
   Aikaterini Milioti\
   Elefterios Stefanou
 
-wireframes: **[ui.md](./ui.md):**
-pdf version **[GeoXplores](./wireframes/GeoXplores.pdf):**
+wireframes: 
+  **[UI.md](./UI.md):**
+  pdf version **[GeoXplores](./wireframes/GeoXplores.pdf):**
+  
+ Software Requirements Specification:
+  **[SRS.md](./SRS.md):**
+  pdf version **[Software Requirements Specification](./Software%20Requirements%20Specification.pdf):**
