@@ -1,4 +1,6 @@
-#wireframes
+# GeoXplores Wireframes
+
+## pdf version : **[GeoXplores.pdf](./wireframes/GeoXrplores.pdf)
 
 ![My Image](wireframes/homepage.png)
 ![My Image](wireframes/homepage-recentPost.png)
