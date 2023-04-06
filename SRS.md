@@ -5,6 +5,12 @@
 
 Version 1.0   
 
+### Contributors:
+> Nikolaos Pnevmatikos\
+Maria Diamandi\
+Aikaterini Milioti\
+Ioannis Kalesis\
+Eleftherios Stefanou
 
 
 Table of Contents
