@@ -2,6 +2,13 @@
 
 ## pdf version : **[GeoXplores.pdf](./wireframes/GeoXplores.pdf)**
 
+### Contributors:
+> Nikolaos Pnevmatikos\
+Maria Diamandi\
+Aikaterini Milioti\
+Ioannis Kalesis\
+Eleftherios Stefanou
+
 We Designed the Wireframes bellow to help us visualize the structure and functionalities of the website. These wireframes are the core pages of our site.
 
 ### HomePage
