@@ -1,4 +1,4 @@
-# GeoXplores
+# GeoXplorers
 
 A social media app with maps
 
@@ -12,7 +12,7 @@ A social media app with maps
 ## Wireframes:
 
 **[UI.md](./UI.md)**\
-pdf version: **[GeoXplores](./wireframes/GeoXplores.pdf)**
+pdf version: **[GeoXplorers](./wireframes/GeoXplorers.pdf)**
   
 ## Software Requirements Specification:
     
