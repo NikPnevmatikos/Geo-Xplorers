@@ -1,6 +1,6 @@
-# GeoXplores Wireframes
+# GeoXplorers Wireframes
 
-## pdf version : **[GeoXplores.pdf](./wireframes/GeoXplores.pdf)**
+## pdf version : **[GeoXplorers.pdf](./wireframes/GeoXplores.pdf)**
 
 ### Contributors:
 > Nikolaos Pnevmatikos\
