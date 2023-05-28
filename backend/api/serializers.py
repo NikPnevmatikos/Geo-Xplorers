@@ -141,3 +141,12 @@ class UserSerializerWithToken(User_Serializer):
     def get_token(self, obj):
         token = RefreshToken.for_user(obj)
         return str(token.access_token)
+
+
+
+#Locations ############################################
+
+class PointOfInterestSerialiser(serializers.ModelSerializer):    
+    class Meta:
+        model = PointOfInterest
+        fields = '__all__'

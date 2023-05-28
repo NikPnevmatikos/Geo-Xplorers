@@ -20,8 +20,8 @@ class MyUserView(APIView):
     def post(self,request,*args,**kwargs):
         data = request.data
         try:
-            if not data.contains("first_name"):
-                return Response("First Name",status=status.HTTP_400_BAD_REQUEST)
+            #if data.contains("first_name"):
+            #   return Response("First Name",status=status.HTTP_400_BAD_REQUEST)
             user = User.objects.create(
                 first_name = data['first_name'],
                 last_name = data['last_name'], 
@@ -32,7 +32,7 @@ class MyUserView(APIView):
 #            myuser = MyUser.objects.create(
 #                user = user
 #            )
-            serializer = User_Serializer(user)
+            serializer = UserSerializerWithToken(user, many = False)
             
             return Response(serializer.data)
         except Exception as e: 
