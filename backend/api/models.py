@@ -5,9 +5,10 @@ class PointOfInterest(models.Model):
     #Fields that a location object may contain
     _id = models.AutoField(primary_key=True, editable=False) 
 
-    timestampAdded = models.IntegerField(null=True, blank=True)
+    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name="user")
+    timestampAdded = models.DateTimeField(auto_now_add=True)
     title=models.TextField(max_length=255,null=True, blank=True)
-    descritpion=models.TextField(max_length=512,null=True,blank=True)
+    description=models.TextField(max_length=512,null=True,blank=True)
     latitude=models.DecimalField( max_digits=12, decimal_places=2, null=True, blank=True)
     longitude=models.DecimalField( max_digits=12, decimal_places=2, null=True, blank=True)
 

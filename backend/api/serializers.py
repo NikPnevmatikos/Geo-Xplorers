@@ -74,10 +74,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class User_Serializer(serializers.ModelSerializer):
-
-    #all extra user information from profile model
-    # name = serializers.SerializerMethodField(read_only=True)
-    
+      
     class Meta:
         model = User
         fields = [
@@ -88,12 +85,6 @@ class User_Serializer(serializers.ModelSerializer):
                 'is_staff'
                 ]
         
-    # def get_name(self, obj):
-    #     name = obj.first_name
-    #     if name == '':
-    #         name = obj.username
-
-    #     return name
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     
@@ -134,7 +125,6 @@ class UserSerializerWithToken(User_Serializer):
             'last_name',
             'is_staff', 
             'token', 
-
         ]
     
     #new access token
@@ -146,7 +136,22 @@ class UserSerializerWithToken(User_Serializer):
 
 #Locations ############################################
 
-class PointOfInterestSerialiser(serializers.ModelSerializer):    
+class CategorySerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Category
+        fields = '__all__'
+
+class KeywordsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Keywords
+        fields = '__all__'
+class PointOfInterestSerializer(serializers.ModelSerializer): 
+    categories = CategorySerializer(many=True) 
+    keywords = KeywordsSerializer(many=True)    
+    
     class Meta:
         model = PointOfInterest
         fields = '__all__'
+        
+        
