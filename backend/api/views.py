@@ -1,4 +1,5 @@
 from argparse import ArgumentDefaultsHelpFormatter
+import csv
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
@@ -73,10 +74,17 @@ class PointOfInterestView(APIView):
         
         """
         # Check for admin user, and if not authenticated, return unauthorized response
-        if not request.user.is_staff:
+        if not request.user.is_authenticated:
             return Response(
                 {
-                    "details":"Authentication credentials were not provided."
+                    "details":"User not authorized"
+                },
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        if False and not request.user.is_staff:
+            return Response(
+                {
+                    "details":"User has not staff privileges"
                 },
                 status=status.HTTP_401_UNAUTHORIZED
             )
@@ -84,39 +92,48 @@ class PointOfInterestView(APIView):
             with transaction.atomic():
                 user = request.user
                 #this will change because the request.data will have the file containing this data
-                data = request.data # Request data sent in the POST request
-
-                # **** here a function call will take place to return the fields from execl file ****
+                upload_file = request.FILES.get('file')
+                if upload_file is None:
+                    return Response('No file was uploaded.',status=status.HTTP_400_BAD_REQUEST)
                 
+                upload_file=upload_file.read().decode('utf-8').replace('\r','')
+                #print(upload_file)
+                rows=upload_file.split('\n')
+                for row in rows:
+                    csv_entries=row.split(',')
+                # **** here a function call will take place to return the fields from execl file ****
+                    #print(csv_entries)
                 # Create a new PointOfInterest object with the provided data
-                pois = PointOfInterest.objects.create (
-                    user = user,
-                    title =  data['title'],
-                    description = data['description'],
-                    latitude = float(data['latitude']),
-                    longitude = float(data['longitude']) 
-                )   
-                # Create Category objects associated with the PointOfInterest
-                for category in data['categories']:
-                    Category.objects.create(
-                        pois = pois,
-                        name = category['name']
-                    )
-               # Create Keyword objects associated with the PointOfInterest
-                for keyword in data['keywords']:
-                    Keywords.objects.create(
-                        pois = pois,
-                        keyword = keyword['keyword']
-                    )
-                print('sdfdsf')
-                # Serialize the PointOfInterest object 
-                serializer = PointOfInterestSerializer(pois, many = False)
-
-                return Response(serializer.data)
+                    pois = PointOfInterest.objects.create (
+                        user = user,
+                        title =  csv_entries[0],
+                        description = csv_entries[1],
+                        latitude = float(csv_entries[2]),
+                        longitude = float(csv_entries[3]) 
+                    )   
+                    for keyword in csv_entries[4].split(';'):
+                        print(keyword)
+                        Keywords.objects.create(
+                            pois = pois,
+                            keyword = keyword
+                        )
+                    # Create Category objects associated with the PointOfInterest
+                    for category in csv_entries[5].split(';'):
+                        print(category)
+                        Category.objects.create(
+                            pois = pois,
+                            name = category
+                        )
+                # Create Keyword objects associated with the PointOfInterest
+                    
+                    # Serialize the PointOfInterest object 
+                    serializer = PointOfInterestSerializer(pois, many = False)
+                
+                return Response()
             
         except Exception as e:
-
-            return Response({"details": "Error occurred during model creation."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            print(e)
+            return Response({"details": "Error occurred during model creation:"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class SingleLocationView(APIView):
