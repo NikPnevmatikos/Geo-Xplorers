@@ -12,6 +12,19 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.db import transaction
 from .serializers import *
 from .models import *
+import enum 
+
+class Positions(enum.IntEnum):
+    TITLE=0
+    DESCRIPTION=1
+    LONGITUDE=2
+    LATITUDE=3
+    KEYWORDS=4
+    CATEGORIES=5
+
+    CATEGORY_ID=0
+    CATEGORY_NAME=1
+
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -55,92 +68,127 @@ class MyUserView(APIView):
         return Response(serializer.data)
 
 
+def readFile(upload_file):
+    lines=upload_file.read().decode('utf-8').replace('\r','')
+    data=[]
+    for row in lines.split('\n'):
+        data.append([element for element in row.split(',')])        
+    return data
+        
+
 # defines a view for creating and retrieving PointOfInterest objects with
 # associated Category and Keyword objects.
-class PointOfInterestView(APIView):
-    @permission_classes([IsAuthenticated])
-    def get(self, request, *args, **kwargs):
-        #Get search parameters and return locations matching search
-        pointOfInterest = PointOfInterest.objects.all().order_by('-_id')
-        
-        serializer = PointOfInterestSerializer(pointOfInterest,many=True)
-        
-        return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_all_points(request):
+    #Get search parameters and return locations matching search
+    pointOfInterest = PointOfInterest.objects.all().order_by('-_id')
     
-    def post(self, request, *args, **kwargs):
-        """
-        This is a view function that creates a new PointOfInterest object with associated Category and
-        Keyword objects, and returns a serialized representation of the created object.
-        
-        """
-        # Check for admin user, and if not authenticated, return unauthorized response
-        if not request.user.is_authenticated:
-            return Response(
-                {
-                    "details":"User not authorized"
-                },
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-        if False and not request.user.is_staff:
-            return Response(
-                {
-                    "details":"User has not staff privileges"
-                },
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-        try:    
-            with transaction.atomic():
-                user = request.user
-                #this will change because the request.data will have the file containing this data
-                upload_file = request.FILES.get('file')
-                if upload_file is None:
-                    return Response('No file was uploaded.',status=status.HTTP_400_BAD_REQUEST)
-                
-                upload_file=upload_file.read().decode('utf-8').replace('\r','')
-                #print(upload_file)
-                rows=upload_file.split('\n')
-                for row in rows:
-                    csv_entries=row.split(',')
-                # **** here a function call will take place to return the fields from execl file ****
-                    #print(csv_entries)
+    serializer = PointOfInterestSerializer(pointOfInterest,many=True)
+    
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminUser])
+def ImportLocations(request):
+    """
+    This is a view function that creates a new PointOfInterest object with associated Category and
+    Keyword objects, and returns a serialized representation of the created object.
+    
+    """
+    try:    
+        with transaction.atomic():
+            user = request.user
+            #this will change because the request.data will have the file containing this data
+            upload_file = request.FILES.get('file')
+            if upload_file is None:
+                return Response('No file was uploaded.',status=status.HTTP_400_BAD_REQUEST)
+            locations=[]
+            for count,row in enumerate(readFile(upload_file)):
                 # Create a new PointOfInterest object with the provided data
-                    pois = PointOfInterest.objects.create (
-                        user = user,
-                        title =  csv_entries[0],
-                        description = csv_entries[1],
-                        latitude = float(csv_entries[2]),
-                        longitude = float(csv_entries[3]) 
-                    )   
-                    for keyword in csv_entries[4].split(';'):
-                        print(keyword)
-                        Keywords.objects.create(
-                            pois = pois,
-                            keyword = keyword
-                        )
-                    # Create Category objects associated with the PointOfInterest
-                    for category in csv_entries[5].split(';'):
-                        print(category)
-                        Category.objects.create(
-                            pois = pois,
-                            name = category
-                        )
+                if len(row)!=6:
+                    raise ValueError("Wrong number of arguments in file, 6 expected: Line "+str(count))
+                if len(row[Positions.TITLE])==0:
+                    raise ValueError("Title is mandatory: Line "+str(count)) 
+
+                if not row[Positions.LONGITUDE].replace('.','').isdigit():
+                    raise ValueError("Longitude must be a decimal: Line "+str(count)) 
+                if not row[Positions.LATITUDE].replace('.','').isdigit():
+                    raise ValueError("Latitude must be a decimal: Line "+str(count)) 
+
+                categories = Category.objects.filter(id__in = row[Positions.CATEGORIES].split(';'))
+
+
+                location = PointOfInterest.objects.create (
+                    user = user,
+                    title =  row[Positions.TITLE],
+                    description = row[Positions.DESCRIPTION],
+                    latitude = float(row[Positions.LONGITUDE]),
+                    longitude = float(row[Positions.LATITUDE]),
+                )   
+                for category in categories.all():
+                    location.categories.add(category)
+
+                location.save()
                 # Create Keyword objects associated with the PointOfInterest
-                    
-                    # Serialize the PointOfInterest object 
-                    serializer = PointOfInterestSerializer(pois, many = False)
+
+                for keyword in row[Positions.KEYWORDS].split(';'):
+                    print(keyword,"Key")
+                    Keywords.objects.create(
+                        pois = location,
+                        keyword = keyword
+                    )
+                locations.append(location)
+
+            serializers = PointOfInterestSerializer(locations, many=True)
+            return Response(serializers.data)
+    except ValueError as e:
+        print(e)
+        return Response({"details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        print(e)
+        return Response({"details": "Error occurred during model creation:"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminUser])
+def ImportCategories(request):
+    try:    
+        with transaction.atomic():
+            #this will change because the request.data will have the file containing this data
+            upload_file = request.FILES.get('file')
+            if upload_file is None:
+                return Response('No file was uploaded.',status=status.HTTP_400_BAD_REQUEST)
+            categories = []
+            for count,category in enumerate(readFile(upload_file)):
+                if len(category)!=2: 
+                    raise ValueError("Wrong number of arguments in file, 2 expected: Line "+str(count))
+                if len(category[Positions.CATEGORY_NAME])==0:
+                    raise ValueError("Name cannot be empty: Line "+str(count))
+                if len(category[Positions.CATEGORY_ID])==0:
+                    raise ValueError("Id cannot be empty: Line "+str(count))
+                if not category[Positions.CATEGORY_ID].isdigit():
+                    raise ValueError("Id must be an integer: Line "+str(count))
                 
-                return Response()
-            
-        except Exception as e:
-            print(e)
-            return Response({"details": "Error occurred during model creation:"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                
+                item = Category.objects.create(
+                    id=int(category[Positions.CATEGORY_ID]),
+                    name=category[Positions.CATEGORY_NAME]
+                )
+                categories.append(item)
+                    
+            serializer = CategorySerializer(categories,many=True)
+            return Response(serializer.data)
 
+    except ValueError as e:
+        print(e)
+        return Response({"details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        print(e)
+        return Response({"details": "Error occurred during model creation:"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-class SingleLocationView(APIView):
-    @permission_classes([IsAuthenticated])
-    def get(self, request, *args, **kwargs):
-        #Get search parameters and return locations matching search
-        pass
 
 
 class SearchView(APIView):
@@ -150,10 +198,27 @@ class SearchView(APIView):
         pass
     @permission_classes([IsAuthenticated])
     def post(self, request, *args, **kwargs):
-        #Post new search
+        #same logic as POST api/search/location but instead of calling findMatchingLocations(), we save the search Object
         pass
     @permission_classes([IsAuthenticated])
     def delete(self, request, *args, **kwargs):
         #Remove search the search from saved searches
         pass
 
+# class SearchLocationView(APIView):
+    
+#     def post(self, request, *args, **kwargs):
+#         try:    
+#             data=request.data
+#             #something something to link categories and keywords to search
+#             #....
+            
+#             search=Search(
+#                 text=data['text']    
+#                 #...
+#             )
+#             locations=search.findMatchingLocations()
+#             return Response(locations)
+#         except Exception as e:
+#             print(e)
+#             return Response({"details": "Error occurred during model creation:"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
