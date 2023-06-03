@@ -22,6 +22,7 @@ class PointOfInterest(models.Model):
     latitude=models.DecimalField( max_digits=12, decimal_places=2, null=True, blank=True)
     longitude=models.DecimalField( max_digits=12, decimal_places=2, null=True, blank=True)
     categories = models.ManyToManyField(Category,related_name="categories", blank=True)
+
     
     def __str__(self):
         return self.title
@@ -37,7 +38,7 @@ class Keywords(models.Model):
         return self.keyword
 
 
-# class Save_seacr(models.Model):
+# class Search(models.Model):
 #    #The list of available search criteria and optionally their values
 #     _id = models.AutoField(primary_key=True, editable=False)
 

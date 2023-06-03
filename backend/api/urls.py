@@ -8,8 +8,7 @@ urlpatterns = [
    path('user/', views.MyUserView.as_view()),
    path('import/categories/',views.ImportCategories),
    path('import/pois/',views.ImportLocations),
-
-   path('get/locations/', views.get_all_points),
-   #path('search/pois/',views.SearchLocationsView.as_view()),
    path('token/refresh/', TokenRefreshView.as_view()),
+
+   path('search/pois/',views.search)
 ]

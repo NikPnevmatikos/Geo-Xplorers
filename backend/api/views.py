@@ -13,6 +13,7 @@ from django.db import transaction
 from .serializers import *
 from .models import *
 import enum 
+import pandas as pd
 
 class Positions(enum.IntEnum):
     TITLE=0
@@ -68,17 +69,67 @@ class MyUserView(APIView):
         return Response(serializer.data)
 
 
-def readFile(upload_file):
-    lines=upload_file.read().decode('utf-8').replace('\r','')
-    data=[]
-    for row in lines.split('\n'):
-        data.append([element for element in row.split(',')])        
-    return data
-        
 
 # defines a view for creating and retrieving PointOfInterest objects with
 # associated Category and Keyword objects.
+from .utils import search_point_of_interest
 
+@api_view(['GET'])
+def search(request):
+    #Get search parameters and return locations matching searc
+    try:
+        data=request.data
+        print(data)
+        if not 'text' in data:
+            raise ValueError("[text] field is missing")
+        if not 'filters' in data:
+            raise ValueError("[filters] field is missing")
+        filters=data['filters']
+        if not isinstance(filters,dict):
+            raise ValueError("[filters] must be a dict")
+        if not 'categories' in filters:
+            raise ValueError("[categories] field is missing")
+        if not isinstance(filters['categories'],list):
+            raise ValueError("[categories] field must of list type")
+        if not 'keywords' in filters:
+            raise ValueError("[keywords] field is missing")
+        if not isinstance(filters['keywords'],list):
+            raise ValueError("[keywords] field must of list type")
+        if not 'distance' in filters:
+            raise ValueError("[distance] field is missing")
+        distance=filters['distance']
+        if not isinstance(distance,dict):
+            raise ValueError("[filters] must be a dict")
+        if not 'lng' in distance:
+            raise ValueError("[lng] field is missing")
+        if not isinstance(distance['lng'],float):
+            raise ValueError("[lng] must be a float")
+        if not 'lat' in distance:
+            raise ValueError("[lat] field is missing")
+        if not isinstance(distance['lat'],float):
+            raise ValueError("[lat] must be a float")
+        if not 'km' in distance:
+            raise ValueError("[km] field is missing")
+        if not isinstance(distance['km'],int):
+            raise ValueError("[km] must be an int")
+
+        
+        results = search_point_of_interest(data)
+
+        serializer = PointOfInterestSerializer(results,many=True)
+        print(serializer.data)
+        return Response(serializer.data)
+    except ValueError as e:
+        return Response({"details":str(e)},status=status.HTTP_400_BAD_REQUEST)
+    #except Exception as e:
+    #    print(e)
+    #    return Response(
+    #            {
+    #                "details" : "An Error occured during Searching"
+    #            },
+    #            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+    #            )
+    
 
 @api_view(['GET'])
 def get_all_points(request):
@@ -88,6 +139,12 @@ def get_all_points(request):
     serializer = PointOfInterestSerializer(pointOfInterest,many=True)
     
     return Response(serializer.data)
+
+def readFile(upload_file):
+    lines=upload_file.read().decode('utf-8').replace('\r','')
+    data=[row.split('\t') for row in lines.split('\n')]      
+    #print(data)
+    return data
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -113,12 +170,12 @@ def ImportLocations(request):
                 if len(row[Positions.TITLE])==0:
                     raise ValueError("Title is mandatory: Line "+str(count)) 
 
-                if not row[Positions.LONGITUDE].replace('.','').isdigit():
+                if not isinstance(row[Positions.LONGITUDE],float):
                     raise ValueError("Longitude must be a decimal: Line "+str(count)) 
-                if not row[Positions.LATITUDE].replace('.','').isdigit():
+                if not isinstance(row[Positions.LATITUDE],float):
                     raise ValueError("Latitude must be a decimal: Line "+str(count)) 
 
-                categories = Category.objects.filter(id__in = row[Positions.CATEGORIES].split(';'))
+                categories = Category.objects.filter(id__in = row[Positions.CATEGORIES].split(','))
 
 
                 location = PointOfInterest.objects.create (
@@ -133,8 +190,7 @@ def ImportLocations(request):
 
                 location.save()
                 # Create Keyword objects associated with the PointOfInterest
-
-                for keyword in row[Positions.KEYWORDS].split(';'):
+                for keyword in row[Positions.KEYWORDS].split(','):
                     print(keyword,"Key")
                     Keywords.objects.create(
                         pois = location,
