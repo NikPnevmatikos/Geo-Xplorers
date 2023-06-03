@@ -118,7 +118,12 @@ def search(request):
 
         serializer = PointOfInterestSerializer(results,many=True)
         print(serializer.data)
-        return Response(serializer.data)
+        return Response({
+            "start":0,
+            "count":results.count(),
+            "total":results.count(),
+            "data":serializer.data
+            })
     except ValueError as e:
         return Response({"details":str(e)},status=status.HTTP_400_BAD_REQUEST)
     #except Exception as e:
@@ -167,23 +172,33 @@ def ImportLocations(request):
                 # Create a new PointOfInterest object with the provided data
                 if len(row)!=6:
                     raise ValueError("Wrong number of arguments in file, 6 expected: Line "+str(count))
+                if not isinstance(row[Positions.TITLE],str):
+                    raise ValueError("Title must be a str: Line "+str(count))
+                if not isinstance(row[Positions.DESCRIPTION],str):
+                    raise ValueError("Description must be a str: Line "+str(count)) 
                 if len(row[Positions.TITLE])==0:
-                    raise ValueError("Title is mandatory: Line "+str(count)) 
-
-                if not isinstance(row[Positions.LONGITUDE],float):
-                    raise ValueError("Longitude must be a decimal: Line "+str(count)) 
-                if not isinstance(row[Positions.LATITUDE],float):
-                    raise ValueError("Latitude must be a decimal: Line "+str(count)) 
-
-                categories = Category.objects.filter(id__in = row[Positions.CATEGORIES].split(','))
+                    raise ValueError("Title cannot be empty: Line "+str(count)) 
+                if not isinstance(row[Positions.LONGITUDE],str):
+                    raise ValueError("Longitude must be a str: Line "+str(count)) 
+                if not isinstance(row[Positions.LATITUDE],str):
+                    raise ValueError("Latitude must be a str: Line "+str(count)) 
+                if not isinstance(row[Positions.KEYWORDS],str):
+                    raise ValueError("Keywords must be a str: Line "+str(count))
+                if not isinstance(row[Positions.CATEGORIES],str):
+                    raise ValueError("Categories must be a str: Line "+str(count))
+                
+                categoryIDs=row[Positions.CATEGORIES].split(',')
+                categories = Category.objects.filter(id__in = categoryIDs)
+                if categories.count()!=len(categoryIDs):
+                    raise ValueError("Category Id's do not exist in database: Line "+str(count))
 
 
                 location = PointOfInterest.objects.create (
                     user = user,
                     title =  row[Positions.TITLE],
                     description = row[Positions.DESCRIPTION],
-                    latitude = float(row[Positions.LONGITUDE]),
-                    longitude = float(row[Positions.LATITUDE]),
+                    latitude = row[Positions.LONGITUDE],
+                    longitude = row[Positions.LATITUDE],
                 )   
                 for category in categories.all():
                     location.categories.add(category)
@@ -191,7 +206,6 @@ def ImportLocations(request):
                 location.save()
                 # Create Keyword objects associated with the PointOfInterest
                 for keyword in row[Positions.KEYWORDS].split(','):
-                    print(keyword,"Key")
                     Keywords.objects.create(
                         pois = location,
                         keyword = keyword
@@ -205,7 +219,7 @@ def ImportLocations(request):
         return Response({"details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         print(e)
-        return Response({"details": "Error occurred during model creation:"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"details": "Error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -213,27 +227,31 @@ def ImportLocations(request):
 def ImportCategories(request):
     try:    
         with transaction.atomic():
-            #this will change because the request.data will have the file containing this data
             upload_file = request.FILES.get('file')
             if upload_file is None:
                 return Response('No file was uploaded.',status=status.HTTP_400_BAD_REQUEST)
             categories = []
-            for count,category in enumerate(readFile(upload_file)):
-                if len(category)!=2: 
+            for count,row in enumerate(readFile(upload_file)):
+                if len(row)!=2: 
                     raise ValueError("Wrong number of arguments in file, 2 expected: Line "+str(count))
-                if len(category[Positions.CATEGORY_NAME])==0:
+                if not isinstance(row[Positions.CATEGORY_ID],str):
+                    raise ValueError("Id must be an int: Line "+str(count))
+                if not isinstance(row[Positions.CATEGORY_NAME],str):
+                    raise ValueError("Name must be a str: Line "+str(count))
+                if len(row[Positions.CATEGORY_NAME])==0:
                     raise ValueError("Name cannot be empty: Line "+str(count))
-                if len(category[Positions.CATEGORY_ID])==0:
-                    raise ValueError("Id cannot be empty: Line "+str(count))
-                if not category[Positions.CATEGORY_ID].isdigit():
-                    raise ValueError("Id must be an integer: Line "+str(count))
                 
-                
-                item = Category.objects.create(
-                    id=int(category[Positions.CATEGORY_ID]),
-                    name=category[Positions.CATEGORY_NAME]
-                )
-                categories.append(item)
+                categoryQuerySet=Category.objects.filter(id=row[Positions.CATEGORY_ID])
+                if categoryQuerySet.exists():
+                    name=categoryQuerySet.first()
+                    if (row[Positions.CATEGORIES]!=name):
+                        raise ValueError("Category with Id already exists and is associated with a different name ["+name+"]: Line "+str(count))
+                else:
+                    item = Category.objects.create(
+                        id=int(row[Positions.CATEGORY_ID]),
+                        name=row[Positions.CATEGORY_NAME]
+                    )
+                    categories.append(item)
                     
             serializer = CategorySerializer(categories,many=True)
             return Response(serializer.data)
@@ -243,23 +261,23 @@ def ImportCategories(request):
         return Response({"details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         print(e)
-        return Response({"details": "Error occurred during model creation:"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"details": "Error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
-class SearchView(APIView):
-    @permission_classes([IsAuthenticated])
-    def get(self, request, *args, **kwargs):
-        #Get all searchs that the user is subscribed to
-        pass
-    @permission_classes([IsAuthenticated])
-    def post(self, request, *args, **kwargs):
-        #same logic as POST api/search/location but instead of calling findMatchingLocations(), we save the search Object
-        pass
-    @permission_classes([IsAuthenticated])
-    def delete(self, request, *args, **kwargs):
-        #Remove search the search from saved searches
-        pass
+#class SearchView(APIView):
+#    @permission_classes([IsAuthenticated])
+#    def get(self, request, *args, **kwargs):
+#        #Get all searchs that the user is subscribed to
+#        pass
+#    @permission_classes([IsAuthenticated])
+#    def post(self, request, *args, **kwargs):
+#        #same logic as POST api/search/location but instead of calling findMatchingLocations(), we save the search Object
+#        pass
+#    @permission_classes([IsAuthenticated])
+#    def delete(self, request, *args, **kwargs):
+#        #Remove search the search from saved searches
+#        pass
 
 # class SearchLocationView(APIView):
     

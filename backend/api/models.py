@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+#from django.contrib.gis.geos import Point
 
 class Category(models.Model):
     _id = models.AutoField(primary_key=True, editable=False) 
@@ -21,6 +22,8 @@ class PointOfInterest(models.Model):
     description=models.TextField(max_length=512,null=True,blank=True)
     latitude=models.DecimalField( max_digits=12, decimal_places=2, null=True, blank=True)
     longitude=models.DecimalField( max_digits=12, decimal_places=2, null=True, blank=True)
+    #point = models.PointField(blank=True, null=True)
+
     categories = models.ManyToManyField(Category,related_name="categories", blank=True)
 
     
