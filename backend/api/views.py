@@ -1,7 +1,7 @@
 from argparse import ArgumentDefaultsHelpFormatter
 import csv
 from django.shortcuts import render
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User,Search
 from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.decorators import api_view, permission_classes
@@ -26,7 +26,7 @@ class Positions(enum.IntEnum):
     CATEGORY_ID=0
     CATEGORY_NAME=1
 
-
+MAX_RECENT_SEARCHES=5
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer    
@@ -77,6 +77,63 @@ from .utils import search_point_of_interest
 @api_view(['GET'])
 def search(request):
     #Get search parameters and return locations matching searc
+    #try:
+    #    data=request.data
+    #    print(data)
+    #    if not 'text' in data:
+    #        raise ValueError("[text] field is missing")
+    #    if not 'filters' in data:
+    #        raise ValueError("[filters] field is missing")
+    #    filters=data['filters']
+    #    if not isinstance(filters,dict):
+    #        raise ValueError("[filters] must be a dict")
+    #    if not 'categories' in filters:
+    #        raise ValueError("[categories] field is missing")
+    #    if not isinstance(filters['categories'],list):
+    #        raise ValueError("[categories] field must of list type")
+    #    if not 'keywords' in filters:
+    #        raise ValueError("[keywords] field is missing")
+    #    if not isinstance(filters['keywords'],list):
+    #        raise ValueError("[keywords] field must of list type")
+    #    if not 'distance' in filters:
+    #        raise ValueError("[distance] field is missing")
+    #    distance=filters['distance']
+    #    if not isinstance(distance,dict):
+    #        raise ValueError("[filters] must be a dict")
+    #    if not 'lng' in distance:
+    #        raise ValueError("[lng] field is missing")
+    #    if not isinstance(distance['lng'],float):
+    #        raise ValueError("[lng] must be a float")
+    #    if not 'lat' in distance:
+    #        raise ValueError("[lat] field is missing")
+    #    if not isinstance(distance['lat'],float):
+    #        raise ValueError("[lat] must be a float")
+    #    if not 'km' in distance:
+    #        raise ValueError("[km] field is missing")
+    #    if not isinstance(distance['km'],int):
+    #        raise ValueError("[km] must be an int")
+
+        
+    #    results = search_point_of_interest(data)
+
+    #    serializer = PointOfInterestSerializer(results,many=True)
+    #    print(serializer.data)
+    #    return Response({
+    #        "start":0,
+    #        "count":results.count(),
+    #        "total":results.count(),
+    #        "data":serializer.data
+    #        })
+    #except ValueError as e:
+    #    return Response({"details":str(e)},status=status.HTTP_400_BAD_REQUEST)
+    #except Exception as e:
+    #    print(e)
+    #    return Response(
+    #            {
+    #                "details" : "An Error occured during Searching"
+    #            },
+    #            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+    #            )
     try:
         data=request.data
         print(data)
@@ -100,40 +157,48 @@ def search(request):
         distance=filters['distance']
         if not isinstance(distance,dict):
             raise ValueError("[filters] must be a dict")
-        if not 'lng' in distance:
-            raise ValueError("[lng] field is missing")
-        if not isinstance(distance['lng'],float):
-            raise ValueError("[lng] must be a float")
-        if not 'lat' in distance:
-            raise ValueError("[lat] field is missing")
-        if not isinstance(distance['lat'],float):
-            raise ValueError("[lat] must be a float")
-        if not 'km' in distance:
-            raise ValueError("[km] field is missing")
-        if not isinstance(distance['km'],int):
-            raise ValueError("[km] must be an int")
+        if len(distance)!=0:
+            if ['lat','lng','km'] in distance:
+                if not isinstance(distance['lng'],float):
+                    raise ValueError("[lng] must be a float")
+                if not isinstance(distance['lat'],float):
+                    raise ValueError("[lat] must be a float")
+                if not isinstance(distance['km'],int):
+                    raise ValueError("[km] must be an int")
+            else:
+                raise ValueError("One or more of the fields [lat,lng,km] is missing from a non empty [distance] array")
 
+        categories=Category.objects.filter(pk__in=data['categories'])
+        if categories.count()!=len(data['categories']):
+            raise ValueError("Category Id not matching a category in database")
         
-        results = search_point_of_interest(data)
+        keywords=Keywords.objects.filter(keyword__in=data['keywords'])
+        
+        
+        
+        
+        search=Search(
+            temporary_search=True,
+            text=data['text'],
+            categories=categories,
+            keywords=keywords,
+        )
+        if request.user.is_authenticated:
+            recent_searchs=Search.objects.filter(temporary_search=True).order_by('-timestamp')
+            if recent_searchs.count()==MAX_RECENT_SEARCHES:
+                recent_searchs.first().delete()
+            
+            search.user=request.user
+            search.timestamp=None
+            search.save()
+        
+        locations=search.findLocations()
 
-        serializer = PointOfInterestSerializer(results,many=True)
+        serializer = PointOfInterestSerializer(locations,many=True)
         print(serializer.data)
-        return Response({
-            "start":0,
-            "count":results.count(),
-            "total":results.count(),
-            "data":serializer.data
-            })
+        return Response(serializer.data,status=status.HTTP_201_CREATED)
     except ValueError as e:
         return Response({"details":str(e)},status=status.HTTP_400_BAD_REQUEST)
-    #except Exception as e:
-    #    print(e)
-    #    return Response(
-    #            {
-    #                "details" : "An Error occured during Searching"
-    #            },
-    #            status=status.HTTP_500_INTERNAL_SERVER_ERROR
-    #            )
     
 
 @api_view(['GET'])
@@ -212,6 +277,13 @@ def ImportLocations(request):
                     )
                 locations.append(location)
 
+            #check for new data in searches
+            for search in Search.objects.filter(temporary_search=False):
+                new_data=search.runOptimizedQuery()
+                if (len(new_data)!=0):
+                    user=search.user
+                    #send user an email about said new data of search
+            
             serializers = PointOfInterestSerializer(locations, many=True)
             return Response(serializers.data)
     except ValueError as e:
@@ -265,34 +337,83 @@ def ImportCategories(request):
 
 
 
-#class SearchView(APIView):
-#    @permission_classes([IsAuthenticated])
-#    def get(self, request, *args, **kwargs):
-#        #Get all searchs that the user is subscribed to
-#        pass
-#    @permission_classes([IsAuthenticated])
-#    def post(self, request, *args, **kwargs):
-#        #same logic as POST api/search/location but instead of calling findMatchingLocations(), we save the search Object
-#        pass
-#    @permission_classes([IsAuthenticated])
-#    def delete(self, request, *args, **kwargs):
-#        #Remove search the search from saved searches
-#        pass
+class SearchView(APIView):
+    @permission_classes([IsAuthenticated])
+    def get(self, request, *args, **kwargs):
+        temporary_search_serializer=SearchSerializer(request.user.searches.filter(temporary_search=True),many=True)
+        saved_search_serializer=SearchSerializer(request.user.searches.filter(temporary_search=False),many=True)
+        data={
+            "recent":temporary_search_serializer.data,
+            "saved":saved_search_serializer.data
+        }
+        return Response(data,status=status.HTTP_200_OK)
 
-# class SearchLocationView(APIView):
-    
-#     def post(self, request, *args, **kwargs):
-#         try:    
-#             data=request.data
-#             #something something to link categories and keywords to search
-#             #....
+    @permission_classes([IsAuthenticated])
+    def post(self, request, *args, **kwargs):
+        try:
+            data=request.data
+            print(data)
+            if not 'text' in data:
+                raise ValueError("[text] field is missing")
+            if not 'filters' in data:
+                raise ValueError("[filters] field is missing")
+            filters=data['filters']
+            if not isinstance(filters,dict):
+                raise ValueError("[filters] must be a dict")
+            if not 'categories' in filters:
+                raise ValueError("[categories] field is missing")
+            if not isinstance(filters['categories'],list):
+                raise ValueError("[categories] field must of list type")
+            if not 'keywords' in filters:
+                raise ValueError("[keywords] field is missing")
+            if not isinstance(filters['keywords'],list):
+                raise ValueError("[keywords] field must of list type")
+            if not 'distance' in filters:
+                raise ValueError("[distance] field is missing")
+            distance=filters['distance']
+            if not isinstance(distance,dict):
+                raise ValueError("[filters] must be a dict")
+            if len(distance)!=0:
+                if ['lat','lng','km'] in distance:
+                    if not isinstance(distance['lng'],float):
+                        raise ValueError("[lng] must be a float")
+                    if not isinstance(distance['lat'],float):
+                        raise ValueError("[lat] must be a float")
+                    if not isinstance(distance['km'],int):
+                        raise ValueError("[km] must be an int")
+                else:
+                    raise ValueError("One or more of the fields [lat,lng,km] is missing from a non empty [distance] array")
+
+            categories=Category.objects.filter(pk__in=data['categories'])
+            if categories.count()!=len(data['categories']):
+                raise ValueError("Category Id not matching a category in database")
             
-#             search=Search(
-#                 text=data['text']    
-#                 #...
-#             )
-#             locations=search.findMatchingLocations()
-#             return Response(locations)
-#         except Exception as e:
-#             print(e)
-#             return Response({"details": "Error occurred during model creation:"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            keywords=Keywords.objects.filter(keyword__in=data['keywords'])
+            
+            search=models.Search.objects.create(
+                timestamp=None,
+                temporary_search=False,
+                user=request.user,
+                text=data['text'],
+                categories=categories,
+                keywords=keywords,
+            )
+
+
+            serializer = SearchSerializer(search)
+            print(serializer.data)
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        except ValueError as e:
+            return Response({"details":str(e)},status=status.HTTP_400_BAD_REQUEST)
+    @permission_classes([IsAuthenticated])
+    def delete(self, request, *args, **kwargs):
+        data=request.data
+        try:
+            saved_search=Search.objects.filter(pk=data['_id'])
+            if not saved_search.exists():
+                raise ValueError("Search matching _id does not exist")
+            saved_search.first().delete()
+
+            return Response(status=status.HTTP_202_ACCEPTED)
+        except ValueError as e:
+            return Response({"details":str(e)},status=status.HTTP_400_BAD_REQUEST)

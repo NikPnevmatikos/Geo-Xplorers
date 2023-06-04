@@ -153,5 +153,13 @@ class PointOfInterestSerializer(serializers.ModelSerializer):
     class Meta:
         model = PointOfInterest
         fields = '__all__'
+class SearchSerializer(serializers.ModelSerializer): 
+    categories = CategorySerializer(many=True) 
+    keywords = KeywordsSerializer(many=True)    
+    
+
+    class Meta:
+        model = Search
+        fields = '__all__'
         
         

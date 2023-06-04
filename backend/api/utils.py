@@ -39,7 +39,7 @@ def search_point_of_interest(data):
         radius_sqr=pow(F('latitude') - Decimal(latitude), Decimal(2)) + 
                 pow(F('longitude') - Decimal(longitude), Decimal(2))
     )
-    query.add(Q(radius_sqr__lte=pow(radius, 2)), Q.AND)
+    query.add(Q(radius_sqr__lte=pow(radius*1000, 2)), Q.AND)
     queryset = transaformedPois.filter(query)
 
     #queryset = PointOfInterest
