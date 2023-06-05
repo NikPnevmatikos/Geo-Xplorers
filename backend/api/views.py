@@ -136,13 +136,10 @@ def search(request):
     data=request.data
     search_id=request.query_params.get('pk')
 
-    print(search_id,"\n\n")
     with transaction.atomic():
         try:
-            if search_id is not None:
-                search=Search.objects.filter(pk=search_id)
-                
-                print(search, "\n\n\n")
+            if search_id is not None and request.user.is_authenticated:
+                search=request.user.searches.filter(pk=search_id)
                 if search.exists():
                     locations=search.first().findMatchingLocations()
                     serializer=PointOfInterestSerializer(locations,many=True)
@@ -190,8 +187,6 @@ def search(request):
                 if categories.count()!=len(categories_list):
                     raise ValueError("Input category not matching a category in database")
                 
-                keywords=Keywords.objects.filter(keyword__in=filters['keywords'])
-
                 user=None
                 if request.user.is_authenticated:
                     user=request.user
@@ -200,7 +195,7 @@ def search(request):
                 search=Search.objects.create(
                     user=user,
                     timestamp=None,
-                    temporary_search=True,
+                    subscribed_search=False,
                     text=data['text'],
                     longitude=longitude,
                     latitude=latitude,
@@ -208,11 +203,17 @@ def search(request):
                 )
         
                 for category in categories.all():
-                    print(category)
                     search.categories.add(category)
-                for keyword in keywords.all():
-                    print(keywords)
-                    search.keywords.add(keyword)
+                
+                for keyword in filters['keywords']:
+                    keyword_query=Keywords.objects.filter(keyword=keyword)
+                    if not keyword_query.exists():
+                        keyword_obj=Keywords.objects.create(
+                            keyword = keyword
+                        )
+                    else:
+                        keyword_obj=keyword_query.first()
+                    search.keywords.add(keyword_obj)
                 
                 search.save()
 
@@ -241,7 +242,7 @@ def get_all_points(request):
     pointOfInterest = PointOfInterest.objects.all().order_by('-_id')
     
     serializer = PointOfInterestSerializer(pointOfInterest,many=True)
-    
+
     return Response(serializer.data)
 
 def readFile(upload_file):
@@ -267,7 +268,7 @@ def ImportLocations(request):
             if upload_file is None:
                 return Response('No file was uploaded.',status=status.HTTP_400_BAD_REQUEST)
             locations=[]
-            import_timestamp=datetime.datetime.now()
+            import_timestamp=timezone.localtime()
             for count,row in enumerate(readFile(upload_file)):
                 # Create a new PointOfInterest object with the provided data
                 if len(row)!=6:
@@ -306,14 +307,19 @@ def ImportLocations(request):
                 location.save()
                 # Create Keyword objects associated with the PointOfInterest
                 for keyword in row[Positions.KEYWORDS].split(','):
-                    Keywords.objects.create(
-                        pois = location,
-                        keyword = keyword
-                    )
+                    keyword_query=Keywords.objects.filter(keyword=keyword)
+                    if not keyword_query.exists():
+                        keyword_obj=Keywords.objects.create(
+                            keyword = keyword
+                        )
+                    else:
+                        keyword_obj=keyword_query.first()
+                    location.keywords.add(keyword_obj)
+                
                 locations.append(location)
 
             #check for new data in searches
-            for search in Search.objects.filter(temporary_search=False):
+            for search in Search.objects.filter(subscribed_search=True):
                 new_data=search.findNewData(import_timestamp)
                 if (len(new_data)!=0):
                     email=search.user.email
@@ -370,23 +376,20 @@ def ImportCategories(request):
         print(e)
         return Response({"details": "Error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
+@permission_classes([IsAuthenticated])
 class SearchView(APIView):
-    @permission_classes([IsAuthenticated])
-    def get(self, request, *args, **kwargs):
-        temporary_search_serializer=SearchSerializer(request.user.searches.filter(temporary_search=True).order_by('-timestamp')[:(MAX_RECENT_SEARCHES)],many=True)
-        saved_search_serializer=SearchSerializer(request.user.searches.filter(temporary_search=False).order_by('-timestamp'),many=True)
+    def get(self, request, *args, **kwargs):        
+        recent_search_serializer=SearchSerializer(request.user.searches.all().order_by('-timestamp')[:(MAX_RECENT_SEARCHES)],many=True)
+        subscribed_search_serializer=SearchSerializer(request.user.searches.filter(subscribed_search=True).order_by('-timestamp'),many=True)
         
         
         data={
-            "recent":temporary_search_serializer.data,
-            "saved":saved_search_serializer.data
+            "recent":recent_search_serializer.data,
+            "saved":subscribed_search_serializer.data
         }
         print(data)
         return Response(data,status=status.HTTP_200_OK)
         
-
-    @permission_classes([IsAuthenticated])
     def post(self, request, *args, **kwargs):
         try:
             search_id=request.query_params.get('pk')
@@ -397,20 +400,19 @@ class SearchView(APIView):
             if not search_query.exists():
                 raise ValueError("Search matching _id: "+str(search_id)+" does not exist")
             search=search_query.first()
-            if not search.temporary_search:
-                raise ValueError("Cannot save an already Saved Search")
+            if search.subscribed_search:
+                raise ValueError("Cannot subscribe to an already Subscribed Search")
             
 
-            newSearch = addToSaved(search)
+            search.subscribed_search=True
+            search.save()
 
-            serializer=SearchSerializer(newSearch)
+            serializer=SearchSerializer(search)
             print(serializer.data)
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         except ValueError as e:
             return Response({"details":str(e)},status=status.HTTP_400_BAD_REQUEST)
             
-    
-    @permission_classes([IsAuthenticated])
     def delete(self, request, *args, **kwargs):
         try:
             id=request.query_params.get('pk',None)

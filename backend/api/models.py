@@ -1,4 +1,3 @@
-from datetime import datetime,timezone
 from decimal import Decimal
 from django.db import models
 from django.contrib.auth.models import User
@@ -16,6 +15,14 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+class Keywords(models.Model):
+    _id = models.AutoField(primary_key=True, editable=False) 
+
+    keyword=models.CharField(max_length=30, null=True, blank=True)
+
+    def __str__(self):
+        return self.keyword
+    
 class PointOfInterest(models.Model):
     #Fields that a location object may contain
     _id = models.AutoField(primary_key=True, editable=False) 
@@ -28,21 +35,14 @@ class PointOfInterest(models.Model):
     longitude=models.DecimalField( max_digits=12, decimal_places=2, null=True, blank=True)
     #point = models.PointField(blank=True, null=True)
 
-    categories = models.ManyToManyField(Category,related_name="categories", blank=True)
-
+    categories = models.ManyToManyField(Category,related_name="locations")
+    keywords=models.ManyToManyField(Keywords,related_name="locations")
     
     def __str__(self):
         return self.title
 
 
-class Keywords(models.Model):
-    _id = models.AutoField(primary_key=True, editable=False) 
 
-    keyword=models.CharField(max_length=30, null=True, blank=True)
-    pois=models.ForeignKey(PointOfInterest,on_delete=models.CASCADE,related_name="keywords")
-
-    def __str__(self):
-        return self.keyword
 
 
 class Search(models.Model):
@@ -50,14 +50,14 @@ class Search(models.Model):
     _id = models.AutoField(primary_key=True, editable=False)
 
     timestamp=models.DateTimeField(null=True, blank=True)
-    temporary_search=models.BooleanField()
+    subscribed_search=models.BooleanField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True,related_name="searches")
     text=models.TextField(max_length=512,null=True,blank=True)
     categories=models.ManyToManyField(Category,related_name="searches")
     keywords=models.ManyToManyField(Keywords,related_name="searches")
     latitude=models.DecimalField( max_digits=12, decimal_places=2, null=True, blank=True)
     longitude=models.DecimalField( max_digits=12, decimal_places=2, null=True, blank=True)
-    kilometers=models.IntegerField()
+    kilometers=models.IntegerField(null=True,blank=True)
     cache_locations=models.ManyToManyField(PointOfInterest,related_name="searches")
 
 
@@ -68,19 +68,23 @@ class Search(models.Model):
         query = Q()
         if timestamp is not None:
             query=(Q(timestampAdded__gt=timestamp))
+        
+        free_text_filter=Q()
         if self.text != '':
-            query.add(Q(title__contains = self.text), Q.OR)
-            query.add(Q(description__contains = self.text), Q.OR)
-
+            free_text_filter.add(Q(title__contains = self.text), Q.OR)
+            free_text_filter.add(Q(description__contains = self.text), Q.OR)
+        
         if self.categories.count() > 0:
-            query.add(Q(categories__in=self.categories.all()), Q.AND)
+            query.add(Q(categories__in=self.categories.all()),Q.AND)
         elif self.text != '':
-            query.add(Q(categories__name__contains=self.text), Q.OR)
+            free_text_filter.add(Q(categories__name__contains=self.text), Q.OR)
 
         if self.keywords.count() > 0:
             query.add(Q(keywords__in=self.keywords.all()), Q.AND)
         elif self.text != '':
-            query.add(Q(keywords__keyword__contains=self.text), Q.OR)
+            free_text_filter.add(Q(keywords__keyword__contains=self.text), Q.OR)
+
+        query.add(free_text_filter,Q.AND)
 
         if self.latitude and self.longitude and self.kilometers:
             transaformedPois=PointOfInterest.objects.annotate(
@@ -89,7 +93,7 @@ class Search(models.Model):
             )
             query.add(Q(radius_sqr__lte=pow(self.kilometers*1000, 2)), Q.AND)
 
-            queryset = transaformedPois.filter(query)
+            queryset = transaformedPois.filter(query).order_by('-_id')
             
         else:
             queryset = PointOfInterest.objects.filter(query).order_by('-_id')
