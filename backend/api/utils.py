@@ -45,3 +45,24 @@ def search_point_of_interest(data):
     #queryset = PointOfInterest
 
     return queryset
+
+
+def addToSaved(search):
+    categories = search.categories
+    keywords = search.keywords
+    cache_locations = search.cache_locations
+
+    search._id=None
+    search.save()
+    print(search,' after id save')
+    for category in categories.all():
+        search.categories.add(category)
+    for keyword in keywords.all():
+        search.keywords.add(keyword)
+    for cache_location in cache_locations.all():
+        search.cache_locations.add(cache_location)
+        
+    search.temporary_search = False
+
+    search.save()
+    return search

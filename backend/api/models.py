@@ -1,8 +1,9 @@
-import datetime
+from datetime import datetime,timezone
 from decimal import Decimal
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Q,F
+from django.utils import timezone
 #from django.contrib.gis.geos import Point
 
 class Category(models.Model):
@@ -48,7 +49,7 @@ class Search(models.Model):
    #The list of available search criteria and optionally their values
     _id = models.AutoField(primary_key=True, editable=False)
 
-    timestamp=models.DateTimeField()
+    timestamp=models.DateTimeField(null=True, blank=True)
     temporary_search=models.BooleanField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True,related_name="searches")
     text=models.TextField(max_length=512,null=True,blank=True)
@@ -57,44 +58,61 @@ class Search(models.Model):
     latitude=models.DecimalField( max_digits=12, decimal_places=2, null=True, blank=True)
     longitude=models.DecimalField( max_digits=12, decimal_places=2, null=True, blank=True)
     kilometers=models.IntegerField()
-
     cache_locations=models.ManyToManyField(PointOfInterest,related_name="searches")
 
-    def runOptimizedQuery(self):
+
+    def __str__(self):
+        return self.text + " " + str(self._id) 
+    #
+    def __runOptimizedQuery(self,timestamp):
         query = Q()
-        if not self.temporary_search and self.timestamp is not None:
-            query.add(Q(timestamp__gt=self.timestamp),Q.AND)
+        if timestamp is not None:
+            query=(Q(timestampAdded__gt=timestamp))
         if self.text != '':
             query.add(Q(title__contains = self.text), Q.OR)
             query.add(Q(description__contains = self.text), Q.OR)
 
         if self.categories.count() > 0:
-            query.add(Q(categories__in=self.categories), Q.AND)
+            query.add(Q(categories__in=self.categories.all()), Q.AND)
         elif self.text != '':
             query.add(Q(categories__name__contains=self.text), Q.OR)
 
         if self.keywords.count() > 0:
-            query.add(Q(keywords__in=self.keywords), Q.AND)
+            query.add(Q(keywords__in=self.keywords.all()), Q.AND)
         elif self.text != '':
             query.add(Q(keywords__keyword__contains=self.text), Q.OR)
 
-        transaformedPois=PointOfInterest.objects.annotate(
-            radius_sqr=pow(F('latitude') - Decimal(self.latitude), Decimal(2)) + 
-                    pow(F('longitude') - Decimal(self.longitude), Decimal(2))
-        )
-        query.add(Q(radius_sqr__lte=pow(self.kilometers*1000, 2)), Q.AND)
-        
+        if self.latitude and self.longitude and self.kilometers:
+            transaformedPois=PointOfInterest.objects.annotate(
+                radius_sqr=pow(F('latitude') - Decimal(self.latitude), Decimal(2)) + 
+                        pow(F('longitude') - Decimal(self.longitude), Decimal(2))
+            )
+            query.add(Q(radius_sqr__lte=pow(self.kilometers*1000, 2)), Q.AND)
 
-        queryset = transaformedPois.filter(query)
-        if not self.temporary_search:
-            self.timestamp=datetime.datetime.now()
-            for location in queryset.all():
-                self.cache_locations.add(location)
-            self.save()
+            queryset = transaformedPois.filter(query)
+            
+        else:
+            queryset = PointOfInterest.objects.filter(query).order_by('-_id')
+
+
         return queryset.all()
     
-    def findLocations(self):
-        locations=self.cached_locations.all()
-        for new_location in self.runOptimizedQuery():
+    def findMatchingLocations(self):
+        locations=[location for location in self.cache_locations.all()]
+        print(locations,"Old \n\n")        
+
+        new_locations=self.__runOptimizedQuery(self.timestamp)    
+        print(new_locations,"New \n\n") 
+        self.timestamp=timezone.localtime()
+        for new_location in new_locations:
+            self.cache_locations.add(new_location)
             locations.append(new_location)
+        
+        self.save()
+        
         return locations
+        
+    def findNewData(self,import_timestamp):
+        return self.__runOptimizedQuery(import_timestamp)
+    
+

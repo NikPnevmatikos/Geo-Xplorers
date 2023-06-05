@@ -4,3 +4,4 @@ from .models import *
 admin.site.register(PointOfInterest)
 admin.site.register(Category)
 admin.site.register(Keywords)
+admin.site.register(Search)

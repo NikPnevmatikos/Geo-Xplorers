@@ -9,6 +9,8 @@ urlpatterns = [
    path('import/categories/',views.ImportCategories),
    path('import/pois/',views.ImportLocations),
    path('token/refresh/', TokenRefreshView.as_view()),
+   path('search/pois/',views.search),
+   #path('search/pois/<str:pk>/',views.search),
+   path('searches/',views.SearchView.as_view())
 
-   path('search/pois/',views.search)
 ]

@@ -146,6 +146,7 @@ class KeywordsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Keywords
         fields = '__all__'
+
 class PointOfInterestSerializer(serializers.ModelSerializer): 
     categories = CategorySerializer(many=True) 
     keywords = KeywordsSerializer(many=True)    
@@ -153,11 +154,11 @@ class PointOfInterestSerializer(serializers.ModelSerializer):
     class Meta:
         model = PointOfInterest
         fields = '__all__'
+        
 class SearchSerializer(serializers.ModelSerializer): 
     categories = CategorySerializer(many=True) 
     keywords = KeywordsSerializer(many=True)    
     
-
     class Meta:
         model = Search
         fields = '__all__'
