@@ -93,10 +93,10 @@ class Search(models.Model):
             )
             query.add(Q(radius_sqr__lte=pow(self.kilometers*1000, 2)), Q.AND)
 
-            queryset = transaformedPois.filter(query).order_by('-_id')
+            queryset = transaformedPois.filter(query).distinct().order_by('-_id')
             
         else:
-            queryset = PointOfInterest.objects.filter(query).order_by('-_id')
+            queryset = PointOfInterest.objects.filter(query).distinct().order_by('-_id')
 
 
         return queryset.all()
