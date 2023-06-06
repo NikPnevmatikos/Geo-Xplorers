@@ -378,17 +378,25 @@ def ImportCategories(request):
 
 @permission_classes([IsAuthenticated])
 class SearchView(APIView):
-    def get(self, request, *args, **kwargs):        
-        recent_search_serializer=SearchSerializer(request.user.searches.all().order_by('-timestamp')[:(MAX_RECENT_SEARCHES)],many=True)
-        subscribed_search_serializer=SearchSerializer(request.user.searches.filter(subscribed_search=True).order_by('-timestamp'),many=True)
-        
-        
-        data={
-            "recent":recent_search_serializer.data,
-            "saved":subscribed_search_serializer.data
-        }
-        print(data)
-        return Response(data,status=status.HTTP_200_OK)
+    def get(self, request, *args, **kwargs):  
+        try:
+            type=request.query_params.get('type',None)
+            if type is None:
+                raise ValueError('[type] field missing')
+            if type not in ['saved','recent']:
+                raise ValueError('[type] must be either \"recent\" or \"saved\"')
+
+            if type=="recent":
+                serializer=SearchSerializer(request.user.searches.filter(subscribed_search=False).order_by('-timestamp')[:(MAX_RECENT_SEARCHES)],many=True)
+            elif type=="saved":
+                serializer=SearchSerializer(request.user.searches.filter(subscribed_search=True).order_by('-timestamp'),many=True)
+            else:
+                raise ValueError('[type] must be either \"recent\" or \"saved\"')
+
+            print(serializer.data)
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        except ValueError as e:
+            return Response({"details":str(e)},status=status.HTTP_400_BAD_REQUEST)
         
     def post(self, request, *args, **kwargs):
         try:
@@ -404,10 +412,9 @@ class SearchView(APIView):
                 raise ValueError("Cannot subscribe to an already Subscribed Search")
             
 
-            search.subscribed_search=True
-            search.save()
+            new_search=addToSaved(search)
 
-            serializer=SearchSerializer(search)
+            serializer=SearchSerializer(new_search)
             print(serializer.data)
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         except ValueError as e:

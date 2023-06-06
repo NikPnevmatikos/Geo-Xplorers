@@ -62,7 +62,7 @@ def addToSaved(search):
     for cache_location in cache_locations.all():
         search.cache_locations.add(cache_location)
         
-    search.temporary_search = False
+    search.subscribed_search = True
 
     search.save()
     return search
