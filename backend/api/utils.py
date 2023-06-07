@@ -66,3 +66,74 @@ def addToSaved(search):
 
     search.save()
     return search
+
+
+from django.core.mail import EmailMessage, get_connection, send_mass_mail
+from django.conf import settings
+
+def send_email(receivers):   
+    with get_connection(  
+        host=settings.EMAIL_HOST, 
+        port=settings.EMAIL_PORT,  
+        username=settings.EMAIL_HOST_USER, 
+        password=settings.EMAIL_HOST_PASSWORD, 
+        use_tls=settings.EMAIL_USE_TLS  
+    ) as connection:  
+        subject = 'new data imported'
+        email_from = settings.EMAIL_HOST_USER  
+        recipient_list = receivers 
+        message = 'dear costumer, one of your save searches has new data. Check it out'  
+        EmailMessage(subject, message, email_from, recipient_list, connection=connection).send()  
+        
+
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
+def send_lot_email(recipients):
+        subject = 'Stay in the Loop: New Points of Interest Match Your Search Criteria!'
+        
+        # 'search': {
+        #                 "filters" :{
+        #                     "categories": ['lake', 'balls'],
+        #                     "keywords": ['keyword3','keyword2'],
+        #                     "distance": {'lat':'0.0','lng':'0.0','km':'25'}
+        #                 },
+        #                 "text": "testdfhbkjdfbbkjk"
+
+        #             }  
+
+    
+        for recipient in recipients:
+            search = recipient['search']
+            filters = search['filters']
+            distance = filters['distance']
+            context = {
+                'name': recipient['name'],
+                'new_locations' : recipient['new_locations'],
+                'text': search['text'],
+                'categories': filters['categories'],
+                'keywords': filters['keywords'],
+                'lat': distance['lat'],
+                'lng': distance['lng'],
+                'km': distance['km']
+            }
+            
+            message = render_to_string('emailNotificationTemplate.html', context)
+
+            plain_message = strip_tags(message)
+            from_email = settings.EMAIL_HOST_USER
+            recipient_email = recipient['email']
+
+            email = EmailMultiAlternatives(subject, plain_message, from_email, [recipient_email])
+            email.attach_alternative(message, 'text/html')
+            email.content_subtype = 'html'
+            
+            email.send()
+            
+            #email_data.append((email.subject, email.body, email.from_email, email.to , ))
+            #email_data.append(email)
+        
+        #send_mass_mail(email_data, fail_silently=False)
+            
+        #send_mass_mail(email_data, fail_silently=False)
