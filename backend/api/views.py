@@ -251,6 +251,8 @@ def readFile(upload_file):
     #print(data)
     return data
 
+from .utils import send_email, send_lot_email
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 @permission_classes([IsAdminUser])
@@ -319,11 +321,35 @@ def ImportLocations(request):
                 locations.append(location)
 
             #check for new data in searches
+            recipient_list = []
             for search in Search.objects.filter(subscribed_search=True):
                 new_data=search.findNewData(import_timestamp)
                 if (len(new_data)!=0):
-                    email=search.user.email
+                    categories_list = [category.name for category in search.categories.all()]
+                    keywords_list = [keyword.keyword for keyword in search.keywords.all()]
+                    recipient = {
+                                    'email': search.user.email,
+                                    'name': search.user.first_name + " " + search.user.last_name,
+                                    'new_locations': str(len(new_data)),
+                                    'search': 
+                                        {
+                                            "filters" :{
+                                                "categories": categories_list,
+                                                "keywords": keywords_list,
+                                                "distance": {'lat':str(search.latitude),'lng':str(search.longitude),'km':str(search.kilometers)}
+                                            },
+                                            "text": search.text
+
+                                        }                
+                                }
+                                
+                    #email=search.user.email
+                    recipient_list.append(recipient)
                     #send user an email about said new data of search
+                    
+            
+            #send_email(recipient_list)
+            send_lot_email(recipient_list)
             
             serializers = PointOfInterestSerializer(locations, many=True)
             return Response(serializers.data)
@@ -426,3 +452,46 @@ class SearchView(APIView):
             return Response({"Status" : "OK" },status=status.HTTP_202_ACCEPTED)
         except ValueError as e:
             return Response({"details":str(e)},status=status.HTTP_400_BAD_REQUEST)
+        
+from .utils import send_lot_email
+
+@api_view(['POST'])
+def send_email_to_users(request):
+    try:
+        recipients = [
+            {
+                'email': 'nikpnevmatikos@gmail.com',
+                'name': 'Nick the greek',
+                'new_locations': '3',
+                'search': {
+                        "filters" :{
+                            "categories": ['lake', 'house'],
+                            "keywords": ['keyword'],
+                            "distance": {'lat':'0.0','lng':'0.0','km':'25'}
+                        },
+                        "text": "test"
+
+                    }                
+            },
+            {
+                'email': 'tikonikos@gmail.com', 
+                'name': 'God Nicky nicky',
+                'new_locations': '10',
+                'search': {
+                        "filters" :{
+                            "categories": ['lake', 'balls'],
+                            "keywords": ['keyword3','keyword2'],
+                            "distance": {'lat':'0.0','lng':'0.0','km':'25'}
+                        },
+                        "text": "testdfhbkjdfbbkjk"
+
+                    }  
+            },
+        ]
+        
+        send_lot_email(recipients)
+        #send_mass_mail(email_data, fail_silently=False)
+        return Response({"details": "Email Send"})
+    except Exception as e:
+        print(e)
+        return Response({"details": "Something went wrong"})
