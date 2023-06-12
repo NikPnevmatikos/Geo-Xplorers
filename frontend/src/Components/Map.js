@@ -13,10 +13,15 @@ function Map() {
         width: '100%',
         height: '100vh'
       }}
-      center={{
-        lat: -3.745,
-        lng: -38.523
+      // center={{
+      //   lat: -3.745,
+      //   lng: -38.523
+      // }}
+      center = {{
+        lat: 37.983810,
+        lng: 23.727539
       }}
+
       zoom={10}
       options={{
           mapTypeControl: true, // Enable map type control
