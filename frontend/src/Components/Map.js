@@ -1,7 +1,7 @@
 import React from 'react';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 
-function Home() {
+function Map() {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.REACT_APP_MAPS
@@ -31,4 +31,4 @@ function Home() {
   ) : <div>oeoeoeoeoeoeeo the google map is trying to load</div>;
 }
 
-export default React.memo(Home);
+export default React.memo(Map);

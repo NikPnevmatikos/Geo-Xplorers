@@ -37,6 +37,8 @@ function Header() {
         {/* <li className="nav-item" style={{width: "150px"}}>
           <a className="nav-link" href="#">Saved Searches</a>
         </li> */}
+
+        {/* the items are going to change if the user is logged in or not */}
         <li className="nav-item">
           <a className="nav-link" href="#">Login</a>
         </li>
