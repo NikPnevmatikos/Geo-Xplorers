@@ -13,6 +13,7 @@ urlpatterns = [
    #path('search/pois/<str:pk>/',views.search),
    path('searches/',views.SearchView.as_view()),
    
-   path("email/", views.send_email_to_users)
+   path("announcement/", views.get_user_announcements),
+   
 
 ]

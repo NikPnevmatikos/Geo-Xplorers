@@ -5,6 +5,7 @@ from rest_framework import status, exceptions
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenObtainSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.utils.timezone import now
 
 
 
@@ -163,4 +164,24 @@ class SearchSerializer(serializers.ModelSerializer):
         model = Search
         fields = '__all__'
         
+class AnnouncementSerializer(serializers.ModelSerializer):
+    
+    receivedTime = serializers.SerializerMethodField()
+    class Meta:
+        model = Announcement
+        fields = '__all__'
         
+    def get_receivedTime(self, obj):
+        dif = now() - obj.receivedTime
+        # .strftime('%Y')
+        time = 0
+        if(dif.days > 365):
+            time = obj.receivedTime.strftime('%Y')
+        elif(dif.days > 1):
+            time = obj.receivedTime.strftime('%d / %m')
+        elif(dif.days > 0):
+            time = 'Yesterday'
+        else:
+            time = obj.receivedTime.strftime('%H:%M')
+            
+        return time
