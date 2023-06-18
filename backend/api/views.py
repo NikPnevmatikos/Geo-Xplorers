@@ -75,64 +75,7 @@ from .utils import search_point_of_interest,addToSaved
 
 @api_view(['GET'])
 def search(request):
-    #Get search parameters and return locations matching searc
-    #try:
-    #    data=request.data
-    #    print(data)
-    #    if not 'text' in data:
-    #        raise ValueError("[text] field is missing")
-    #    if not 'filters' in data:
-    #        raise ValueError("[filters] field is missing")
-    #    filters=data['filters']
-    #    if not isinstance(filters,dict):
-    #        raise ValueError("[filters] must be a dict")
-    #    if not 'categories' in filters:
-    #        raise ValueError("[categories] field is missing")
-    #    if not isinstance(filters['categories'],list):
-    #        raise ValueError("[categories] field must of list type")
-    #    if not 'keywords' in filters:
-    #        raise ValueError("[keywords] field is missing")
-    #    if not isinstance(filters['keywords'],list):
-    #        raise ValueError("[keywords] field must of list type")
-    #    if not 'distance' in filters:
-    #        raise ValueError("[distance] field is missing")
-    #    distance=filters['distance']
-    #    if not isinstance(distance,dict):
-    #        raise ValueError("[filters] must be a dict")
-    #    if not 'lng' in distance:
-    #        raise ValueError("[lng] field is missing")
-    #    if not isinstance(distance['lng'],float):
-    #        raise ValueError("[lng] must be a float")
-    #    if not 'lat' in distance:
-    #        raise ValueError("[lat] field is missing")
-    #    if not isinstance(distance['lat'],float):
-    #        raise ValueError("[lat] must be a float")
-    #    if not 'km' in distance:
-    #        raise ValueError("[km] field is missing")
-    #    if not isinstance(distance['km'],int):
-    #        raise ValueError("[km] must be an int")
 
-        
-    #    results = search_point_of_interest(data)
-
-    #    serializer = PointOfInterestSerializer(results,many=True)
-    #    print(serializer.data)
-    #    return Response({
-    #        "start":0,
-    #        "count":results.count(),
-    #        "total":results.count(),
-    #        "data":serializer.data
-    #        })
-    #except ValueError as e:
-    #    return Response({"details":str(e)},status=status.HTTP_400_BAD_REQUEST)
-    #except Exception as e:
-    #    print(e)
-    #    return Response(
-    #            {
-    #                "details" : "An Error occured during Searching"
-    #            },
-    #            status=status.HTTP_500_INTERNAL_SERVER_ERROR
-    #            )
     data=request.data
     search_id=request.query_params.get('pk')
 
@@ -218,16 +161,10 @@ def search(request):
                 search.save()
 
                 locations=search.findMatchingLocations()
-
-                #if request.user.is_authenticated:
-                #    recent_searches=Search.objects.filter(temporary_search=True).order_by('timestamp')
-                #    if recent_searches.count()==MAX_RECENT_SEARCHES+1:
-                #        recent_searches.first().delete()
                 
                 if not request.user.is_authenticated:
                     search.delete()
                 
-                print(locations, '\n\n\n\n\n\n\n')
                 
                 serializer = PointOfInterestSerializer(locations,many=True)
                 print(serializer.data)
@@ -325,6 +262,12 @@ def ImportLocations(request):
             for search in Search.objects.filter(subscribed_search=True):
                 new_data=search.findNewData(import_timestamp)
                 if (len(new_data)!=0):
+                    
+                    announcement = Announcement.objects.create(
+                        user = search.user,
+                        message = str(len(new_data)) + ' new points in your search'
+                    )
+                    
                     categories_list = [category.name for category in search.categories.all()]
                     keywords_list = [keyword.keyword for keyword in search.keywords.all()]
                     recipient = {
@@ -459,46 +402,15 @@ class SearchView(APIView):
             return Response({"Status" : "OK" },status=status.HTTP_202_ACCEPTED)
         except ValueError as e:
             return Response({"details":str(e)},status=status.HTTP_400_BAD_REQUEST)
-        
-from .utils import send_lot_email
 
-@api_view(['POST'])
-def send_email_to_users(request):
-    try:
-        recipients = [
-            {
-                'email': 'nikpnevmatikos@gmail.com',
-                'name': 'Nick the greek',
-                'new_locations': '3',
-                'search': {
-                        "filters" :{
-                            "categories": ['lake', 'house'],
-                            "keywords": ['keyword'],
-                            "distance": {'lat':'0.0','lng':'0.0','km':'25'}
-                        },
-                        "text": "test"
 
-                    }                
-            },
-            {
-                'email': 'tikonikos@gmail.com', 
-                'name': 'God Nicky nicky',
-                'new_locations': '10',
-                'search': {
-                        "filters" :{
-                            "categories": ['lake', 'balls'],
-                            "keywords": ['keyword3','keyword2'],
-                            "distance": {'lat':'0.0','lng':'0.0','km':'25'}
-                        },
-                        "text": "testdfhbkjdfbbkjk"
-
-                    }  
-            },
-        ]
-        
-        send_lot_email(recipients)
-        #send_mass_mail(email_data, fail_silently=False)
-        return Response({"details": "Email Send"})
-    except Exception as e:
-        print(e)
-        return Response({"details": "Something went wrong"})
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_announcements(request):
+    user = request.user
+    
+    announcement = Announcement.objects.filter(user=user)
+    
+    serializer = AnnouncementSerializer(announcement,many = True)
+    
+    return Response(serializer.data)

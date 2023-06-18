@@ -120,3 +120,16 @@ class Search(models.Model):
         return self.__runOptimizedQuery(import_timestamp)
     
 
+class Announcement(models.Model):
+    # {image, message ,detailPage, receivedTime}
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    image = models.ImageField(null=True, blank=True, default='/MapIcon.png')
+    message = models.CharField(max_length=200, null=True, blank=True)
+    detailPage = models.CharField(max_length=200, null=True, blank=True, default='http://localhost:3000/')
+    receivedTime = models.DateTimeField(auto_now_add=True)
+    
+    _id = models.AutoField(primary_key=True, editable=False)
+    
+    
+    def __str__(self):
+        return self.message
