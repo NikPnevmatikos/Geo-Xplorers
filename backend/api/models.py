@@ -49,6 +49,7 @@ class Search(models.Model):
    #The list of available search criteria and optionally their values
     _id = models.AutoField(primary_key=True, editable=False)
 
+    image = models.ImageField(null=True, blank=True, default='/defaultMap.png')
     timestamp=models.DateTimeField(null=True, blank=True)
     subscribed_search=models.BooleanField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True,related_name="searches")
@@ -59,6 +60,7 @@ class Search(models.Model):
     longitude=models.DecimalField( max_digits=12, decimal_places=2, null=True, blank=True)
     kilometers=models.IntegerField(null=True,blank=True)
     cache_locations=models.ManyToManyField(PointOfInterest,related_name="searches")
+    newPois = models.IntegerField(null=True,blank=True, default=0)
 
 
     def __str__(self):

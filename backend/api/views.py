@@ -134,7 +134,6 @@ def search(request):
                 if request.user.is_authenticated:
                     user=request.user
                 
-                
                 search=Search.objects.create(
                     user=user,
                     timestamp=None,
@@ -171,6 +170,18 @@ def search(request):
                 return Response(serializer.data,status=status.HTTP_201_CREATED)
         except ValueError as e:
             return Response({"details":str(e)},status=status.HTTP_400_BAD_REQUEST)
+        
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def upload_image(request, pk):
+    try:
+        search = Search.objects.get(_id=pk)
+        search.image = request.FILES.get('image')
+        search.save()
+        
+        return Response({"details" : "Image Saved"})
+    except Exception as e:
+        return Response({"details": "Error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
 @api_view(['GET'])
@@ -268,6 +279,9 @@ def ImportLocations(request):
                         message = str(len(new_data)) + ' new points in your search'
                     )
                     
+                    search.newPois = len(new_data)
+                    search.save()
+                    
                     categories_list = [category.name for category in search.categories.all()]
                     keywords_list = [keyword.keyword for keyword in search.keywords.all()]
                     recipient = {
@@ -344,6 +358,24 @@ def ImportCategories(request):
     except Exception as e:
         print(e)
         return Response({"details": "Error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['GET'])
+def GetCategories(request):
+    """
+    The function `GetCategories` retrieves all categories from the database and returns them as a
+    serialized response.
+    """
+    try:
+        categories = Category.objects.all().order_by('-_id')
+        
+        serializer = CategorySerializer(categories,many=True)
+        
+        return Response(serializer.data)
+        
+    except Exception as e:
+        return Response({"details":str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    
 
 @permission_classes([IsAuthenticated])
 class SearchView(APIView):
