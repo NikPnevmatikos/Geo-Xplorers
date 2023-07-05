@@ -33,8 +33,6 @@ class PointOfInterest(models.Model):
     description=models.TextField(max_length=512,null=True,blank=True)
     latitude=models.DecimalField( max_digits=12, decimal_places=2, null=True, blank=True)
     longitude=models.DecimalField( max_digits=12, decimal_places=2, null=True, blank=True)
-    #point = models.PointField(blank=True, null=True)
-
     categories = models.ManyToManyField(Category,related_name="locations")
     keywords=models.ManyToManyField(Keywords,related_name="locations")
     
@@ -104,16 +102,15 @@ class Search(models.Model):
         return queryset.all()
     
     def findMatchingLocations(self):
-        locations=[location for location in self.cache_locations.all()]
-        print(locations,"Old \n\n")        
+        locations=[location for location in self.cache_locations.all()]       
 
         new_locations=self.__runOptimizedQuery(self.timestamp)    
-        print(new_locations,"New \n\n") 
         self.timestamp=timezone.localtime()
         for new_location in new_locations:
             self.cache_locations.add(new_location)
             locations.append(new_location)
-        
+            
+        self.newPois = 0
         self.save()
         
         return locations

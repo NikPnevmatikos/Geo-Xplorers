@@ -13,6 +13,8 @@ urlpatterns = [
    #path('search/pois/<str:pk>/',views.search),
    path('searches/',views.SearchView.as_view()),
    
+   path('get/pois/', views.get_all_points),
+   
    path('categories/', views.GetCategories),
    path('search/image/<str:pk>/', views.upload_image),
    path("announcement/", views.get_user_announcements),

@@ -52,7 +52,6 @@ class MyUserView(APIView):
             
             return Response(serializer.data)
         except Exception as e: 
-            print(e)
             message = {'detail' : 'There is already an account using this email or username.'}
             return Response(message, status=status.HTTP_400_BAD_REQUEST)
         
@@ -73,7 +72,7 @@ class MyUserView(APIView):
 # associated Category and Keyword objects.
 from .utils import search_point_of_interest,addToSaved
 
-@api_view(['GET'])
+@api_view(['POST'])
 def search(request):
 
     data=request.data
@@ -86,8 +85,13 @@ def search(request):
                 if search.exists():
                     locations=search.first().findMatchingLocations()
                     serializer=PointOfInterestSerializer(locations,many=True)
-                    print(serializer.data)
-                    return Response(serializer.data,status=status.HTTP_200_OK)
+                    return Response({
+                        "_id" : search.first()._id,
+                        "start" : 0,
+                        "count" : len(serializer.data),
+                        "total" : len(serializer.data),
+                        "data" :serializer.data
+                    },status=status.HTTP_200_OK)
                 else:
                     raise ValueError("No saved or recent search with id: "+str(search_id)+" exists")
             else:
@@ -166,8 +170,14 @@ def search(request):
                 
                 
                 serializer = PointOfInterestSerializer(locations,many=True)
-                print(serializer.data)
-                return Response(serializer.data,status=status.HTTP_201_CREATED)
+                return Response({
+                    "_id" : search._id,
+                    "start" : 0,
+                    "count" : len(serializer.data),
+                    "total" : len(serializer.data),
+                    "data" :serializer.data
+                    
+                    },status=status.HTTP_201_CREATED)
         except ValueError as e:
             return Response({"details":str(e)},status=status.HTTP_400_BAD_REQUEST)
         
@@ -196,7 +206,6 @@ def get_all_points(request):
 def readFile(upload_file):
     lines=upload_file.read().decode('utf-8').replace('\r','')
     data=[row.split('\t') for row in lines.split('\n')]      
-    #print(data)
     return data
 
 from .utils import send_email, send_lot_email
@@ -311,10 +320,8 @@ def ImportLocations(request):
             serializers = PointOfInterestSerializer(locations, many=True)
             return Response(serializers.data)
     except ValueError as e:
-        print(e)
         return Response({"details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        print(e)
         return Response({"details": "Error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
@@ -353,10 +360,8 @@ def ImportCategories(request):
             return Response(serializer.data)
 
     except ValueError as e:
-        print(e)
         return Response({"details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        print(e)
         return Response({"details": "Error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(['GET'])
@@ -394,7 +399,6 @@ class SearchView(APIView):
             else:
                 raise ValueError('[type] must be either \"recent\" or \"saved\"')
 
-            print(serializer.data)
             return Response(serializer.data,status=status.HTTP_200_OK)
         except ValueError as e:
             return Response({"details":str(e)},status=status.HTTP_400_BAD_REQUEST)
@@ -416,7 +420,6 @@ class SearchView(APIView):
             new_search=addToSaved(search)
 
             serializer=SearchSerializer(new_search)
-            print(serializer.data)
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         except ValueError as e:
             return Response({"details":str(e)},status=status.HTTP_400_BAD_REQUEST)
