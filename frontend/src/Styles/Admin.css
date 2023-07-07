@@ -1,0 +1,67 @@
+.admin-container {
+    padding: 8%;
+}
+
+.admin-container-head {
+    position: flex;
+    flex-direction: row;
+    padding: 5px;
+    padding-bottom: 10px;
+}
+
+.admin-container-table {
+    /* padding: 2%; */
+    padding: 35px 50px 40px 50px;
+    background-color: whitesmoke;
+    border-radius: 20px;
+    box-shadow: 5px 10px 10px rgba(2, 128, 144, 0.2);
+    height: fit-content;
+    position: flex;
+    flex-direction: row;
+}
+
+.admin-table {
+    max-height: 50vh;
+    overflow-y: scroll;
+    /* width: 500px; */
+}
+
+.admin-table-col {
+    /* position: flex; */
+    /* justify-content: center;
+    align-items: center; */
+}
+
+.admin-title {
+    display: inline;
+}
+
+.admin-button {
+    float: right;
+    border-radius: 5px;
+    border-color: transparent;
+    width: max-content;
+    padding-inline: 20px;
+    justify-content: center;
+    margin: 2px;
+    background-color: rgba(2, 128, 144, 0.6);
+}
+
+.admin-button:hover {
+    background-color: rgba(2, 128, 144, 0.8);
+}
+
+.admin-button-cancel {
+    float: right;
+    border-radius: 5px;
+    border-color: transparent;
+    width: max-content;
+    padding-inline: 20px;
+    justify-content: center;
+    margin: 2px;
+    background-color: rgba(102, 127, 130, 0.4);
+}
+
+.admin-button-cancel:hover {
+    background-color: rgba(102, 127, 130, 0.6);
+}

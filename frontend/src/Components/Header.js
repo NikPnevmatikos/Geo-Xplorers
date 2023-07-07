@@ -62,25 +62,33 @@ function Header() {
           
           {user ?
             <ul className="navbar-nav">
-            <li className={`nav-item dropdown ${isDropdownOpen ? 'show' : ''}`}>
-              <a
-                className="nav-link dropdown-toggle"
-                href="#"
-                role="button"
-                onClick={toggleDropdown}
-              >
-                Account
-              </a>
-              <div className={`dropdown-menu ${isDropdownOpen ? 'show' : ''}`}>
-                <a className="dropdown-item">
-                  Profile
+              {user.is_staff &&
+                <li className="nav-item" style={{width: "130px"}}>
+                  <a className="nav-link" href="/admin_page/">
+                    Admin's Page
+                  </a>
+                </li>
+              }
+              
+              <li className={`nav-item dropdown ${isDropdownOpen ? 'show' : ''}`}>
+                <a
+                  className="nav-link dropdown-toggle"
+                  href="#"
+                  role="button"
+                  onClick={toggleDropdown}
+                >
+                  Account
                 </a>
-                <a className="dropdown-item" onClick={logout}>
-                  Logout
-                </a>
-              </div>
-            </li>
-          </ul>
+                <div className={`dropdown-menu ${isDropdownOpen ? 'show' : ''}`}>
+                  <a className="dropdown-item">
+                    Profile
+                  </a>
+                  <a className="dropdown-item" onClick={logout}>
+                    Logout
+                  </a>
+                </div>
+              </li>
+            </ul>
           :
             <ul className="navbar-nav">
               <li className="nav-item">
