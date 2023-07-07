@@ -180,14 +180,25 @@ def search(request):
                     },status=status.HTTP_201_CREATED)
         except ValueError as e:
             return Response({"details":str(e)},status=status.HTTP_400_BAD_REQUEST)
-        
+
+
+import base64
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def upload_image(request, pk):
     try:
         search = Search.objects.get(_id=pk)
-        search.image = request.FILES.get('image')
+        #write the decoded data back to original format in  file
+        format, imgstr = request.data['image'].split(';base64,') 
+        ext = format.split('/')[-1] 
+        decoded_data=base64.b64decode((imgstr))
+        img_file = open(f'./static/images/Temp.{ext}', 'wb+')
+        img_file.write(decoded_data)
+        search.image.save(f'{search._id}.{ext}', img_file, save=False)
+        img_file.close()
         search.save()
+        
         
         return Response({"details" : "Image Saved"})
     except Exception as e:
