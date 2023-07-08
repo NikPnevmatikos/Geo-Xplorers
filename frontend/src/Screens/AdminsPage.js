@@ -7,35 +7,22 @@ import Modal from 'react-bootstrap/Modal';
 import "../Styles/Admin.css";
 
 function AdminsPage() {
-    // const form = new FormData()
-    // form.append('file', file)
-
-    // const config = {
-    //     headers: {
-    //         'Content-type': 'multipart/form-data',
-    //         // Authorization : Bearer ${user.token}
-    //     }
-    // }
-    // const { data } = await axios.post
-    // (
-    //     http://localhost:8000/api/import/pois/,
-    //     form,
-    //     config
-    // )
-
 
     const [pois, setPois] = useState([]);
     const [ctgs, setCtgs] = useState([]);
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useContext(UserContext);
     const navigate = useNavigate();
-    const [show, setShow] = useState(false);
+    const [show_ctg, setShow_ctg] = useState(false);
+    const [show_poi, setShow_poi] = useState(false);
+    const [file, setFile] = useState();
+    const [success, setSuccess] = useState(false);
 
-    const handleClose_poi = () => setShow(false);
-    const handleShow_poi = () => setShow(true);
+    const handleClose_poi = () => setShow_poi(false);
+    const handleShow_poi = () => setShow_poi(true);
 
-    const handleClose_ctg = () => setShow(false);
-    const handleShow_ctg = () => setShow(true);
+    const handleClose_ctg = () => setShow_ctg(false);
+    const handleShow_ctg = () => setShow_ctg(true);
 
     async function getPois() {
         try {
@@ -88,9 +75,66 @@ function AdminsPage() {
             setLoading(true);
             getPois();
             getCtgs();
-        }
 
-    }, [user])
+            // pop the toast notification
+            if (success) {
+                setSuccess(false);
+            }
+        }
+    }, [user, success])
+
+    const upload = (e) => {
+        const file = e.target.files[0];
+        setFile(file);
+        // setPreview(URL.createObjectURL(file))
+    }
+
+    const saveFile = async(isPoi) => {
+        try {
+            const form = new FormData();
+            form.append('file', file); 
+     
+            const config = {
+                headers: {
+                    'Content-type': 'multipart/form-data',
+                    Authorization : `Bearer ${user.token}`
+                }
+            }
+            
+            if (isPoi) {
+                const { data } = await axios.post(
+                    "http://localhost:8000/api/import/pois/",
+                    form,
+                    config
+                )
+            }
+            else {
+                const { data } = await axios.post(
+                    "http://localhost:8000/api/import/categories/",
+                    form,
+                    config
+                )
+            }
+
+            setLoading(false);
+
+            if (isPoi) {
+                handleClose_poi();
+            }
+            else {
+                handleClose_ctg();
+            }
+            
+            setSuccess(true);
+        } 
+        catch (error) {
+            setLoading(false);
+            console.log(error)
+            window.alert(error.response && error.response.data.detail 
+                ? error.response.data.detail 
+                : error.message);
+        }
+    }
 
     if (loading) {
         return <div></div>
@@ -102,21 +146,22 @@ function AdminsPage() {
 
             {/* modal for uploading categories */}
 
-            <Modal show={show} onHide={handleClose_ctg}>
+            <Modal show={show_ctg} onHide={handleClose_ctg}>
                 <Modal.Header closeButton>
                     <Modal.Title>Create a new category!</Modal.Title>
                 </Modal.Header>
+
                 <Modal.Body>
                     <text>Upload your file:</text>
-                    
                     <br/>
-                    <input type="file" style={{padding: "4px"}}/>
+                    <input type="file" style={{padding: "4px"}} onChange={upload}/>
                 </Modal.Body>
+                
                 <Modal.Footer>
                     <button className="admin-button-cancel" onClick={handleClose_ctg}>
                         Cancel
                     </button>
-                    <button className="admin-button" onClick={handleClose_ctg}>
+                    <button className="admin-button" onClick={() => saveFile(false)}>
                         Save Changes
                     </button>
                 </Modal.Footer>
@@ -125,21 +170,22 @@ function AdminsPage() {
 
             {/* modal for uploading points of interest */}
 
-            <Modal show={show} onHide={handleClose_poi}>
+            <Modal show={show_poi} onHide={handleClose_poi}>
                 <Modal.Header closeButton>
                     <Modal.Title>Create a new point of interest!</Modal.Title>
                 </Modal.Header>
+
                 <Modal.Body>
-                    <text>Upload your file:</text>
-                    
+                    <text>Upload your file:</text>    
                     <br/>
-                    <input type="file" style={{padding: "4px"}}/>
+                    <input type="file" style={{padding: "4px"}} onChange={upload}/>
                 </Modal.Body>
+
                 <Modal.Footer>
                     <button className="admin-button-cancel" onClick={handleClose_poi}>
                         Cancel
                     </button>
-                    <button className="admin-button" onClick={handleClose_poi}>
+                    <button className="admin-button" onClick={() => saveFile(true)}>
                         Save Changes
                     </button>
                 </Modal.Footer>

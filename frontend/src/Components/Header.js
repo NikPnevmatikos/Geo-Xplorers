@@ -55,6 +55,14 @@ function Header() {
             />
             <button className="search-button" type="submit">Search</button>
           </form>
+          <ul className="navbar-nav">
+            <li className="nav-item">
+              <a className="nav-link" href="">
+                Radius
+              </a>
+            </li>
+
+          </ul>
         </div>
         
 
