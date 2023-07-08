@@ -259,6 +259,9 @@ def ImportLocations(request):
                     raise ValueError("Categories must be a str: Line "+str(count))
                 
                 categoryIDs=row[Positions.CATEGORIES].split(',')
+                for id in categoryIDs:
+                    if (id==""):
+                        raise ValueError("Incorrect format for categories list")
                 categories = Category.objects.filter(id__in = categoryIDs)
                 if categories.count()!=len(categoryIDs):
                     raise ValueError("Category Id's do not exist in database: Line "+str(count))
@@ -277,6 +280,8 @@ def ImportLocations(request):
                 location.save()
                 # Create Keyword objects associated with the PointOfInterest
                 for keyword in row[Positions.KEYWORDS].split(','):
+                    if (keyword==""):
+                        raise ValueError("Incorrect format for keywords list")
                     keyword_query=Keywords.objects.filter(keyword=keyword)
                     if not keyword_query.exists():
                         keyword_obj=Keywords.objects.create(
