@@ -1,0 +1,154 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: 'Asap', sans-serif;
+}
+
+h2 {
+  text-align: center;
+}
+
+.card_img {
+  /* margin-right: 1rem; */
+  border-radius: 10px;
+  min-width: 300px;
+  min-height: 180px;
+}
+
+
+.card_action_area_container {
+  display: flex;
+  padding: 12px;
+}
+
+
+
+.text_button_container {
+  display: flex;
+  flex-direction: column;
+}
+
+.text_container {
+  margin-top: -20px;
+}
+
+
+.fixed_button {
+  width: 300px;
+}
+
+.notification {
+  font-family: 'Asap', sans-serif;
+  color: rgb(249, 249, 249);
+  font-size: 16px;
+  text-decoration: none;
+  padding: 10px 20px;
+  width: 200px;
+  position: relative;
+  display: inline-block;
+  border-radius: 5px;
+  border-color: transparent;
+  display: flex;
+  background-color: rgba(2, 128, 144, 0.4);
+  justify-content: center;
+}
+
+.notification:hover {
+  /* width: 200px;
+    padding: 10px 20px; */
+  background-color: rgba(2, 128, 144, 0.4);
+}
+
+.notification .badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  padding: 5px 10px;
+  border-radius: 50%;
+  background: red;
+  color: white;
+}
+
+.Toastify__progress-bar{
+  background-color: rgba(2, 128, 144, 0.4);
+}
+
+.Toastify__progress-bar--success {
+  color: rgba(2, 128, 144, 0.4);
+}
+/* .card {
+    border: 1px solid #ccc;
+    transition: border-color 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .card:hover{
+    border-color: rgb(157, 202, 234);
+  } */
+
+.custom-text {
+  color: rgb(166, 224, 251);
+  font-weight: bold;
+  /* Add any other desired styles */
+}
+
+.button_showMore_showLess {
+  font-size: 5px;
+}
+
+.card {
+
+  background-color: rgb(201, 52, 52);
+
+}
+
+
+.admin-button {
+  cursor: pointer;
+  float: right;
+  border-radius: 5px;
+  border-color: transparent;
+  width: max-content;
+  height: 30px;
+  padding-inline: 20px;
+  justify-content: center;
+  margin: 2px;
+  background-color: rgba(2, 128, 144, 0.6);
+}
+
+.admin-button:hover {
+  background-color: rgba(2, 128, 144, 0.8);
+}
+
+.admin-button-cancel {
+  cursor: pointer;
+  float: right;
+  border-radius: 5px;
+  border-color: transparent;
+  width: max-content;
+  padding-inline: 20px;
+  justify-content: center;
+  margin: 2px;
+  background-color: rgba(102, 127, 130, 0.4);
+  height: 30px;
+}
+
+.admin-button-cancel:hover {
+  background-color: rgba(102, 127, 130, 0.6);
+}
+
+.close-icon {
+  color: grey;
+  margin-left: 330px;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.close-icon:hover {
+  background-color: rgb(220, 215, 215);
+  border-radius: 10px;
+
+}
