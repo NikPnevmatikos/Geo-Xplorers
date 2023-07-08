@@ -357,8 +357,8 @@ def ImportCategories(request):
                 
                 categoryQuerySet=Category.objects.filter(id=row[Positions.CATEGORY_ID])
                 if categoryQuerySet.exists():
-                    name=categoryQuerySet.first()
-                    if (row[Positions.CATEGORIES]!=name):
+                    name=categoryQuerySet.first().name
+                    if (row[Positions.CATEGORY_NAME]!=name):
                         raise ValueError("Category with Id already exists and is associated with a different name ["+name+"]: Line "+str(count))
                 else:
                     item = Category.objects.create(
