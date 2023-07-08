@@ -10,6 +10,8 @@ import { FormControlLabel } from '@mui/material';
 import { Checkbox } from '@mui/material';
 import { FormGroup } from '@mui/material';
 import {InputAdornment} from '@mui/material';
+import { IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 function Home() {
     const {isLoaded} = useJsApiLoader({
@@ -17,7 +19,11 @@ function Home() {
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY
         
         
+        
     })
+
+
+    
     const location = useLocation();
     const navigate = useNavigate()
     const [mapInstance, setMapInstance] = useState(null);
@@ -316,44 +322,63 @@ function Home() {
                 <Button variant="contained" color="primary" onClick={handleModalOpen}>
                 Filters
                 </Button>
-                <Modal 
-                    open={modalOpen} 
+                <Modal
+                    open={modalOpen}
                     onClose={handleModalClose}
                     aria-labelledby="modal-title"
                     aria-describedby="modal-description"
-                    sx={{
-                    display: 'flex',
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: 'white',
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                <div
+                    style={{
+                    backgroundColor: '#f2f2f2',
                     width: '35%',
                     height: '50%',
-                }}>
-                <div>
-                    <FormGroup>
-                        {categories.map(category => (
-                            <FormControlLabel
-                                key={category.id}
-                                control={<Checkbox checked={selectedCategories.includes(category.name)} onChange={handleCategoryChange} name={category.name} />}
-                                label={category.name}
-                            />
-                        ))}
-                    </FormGroup>
+                    borderRadius: '8px',
+                    padding: '20px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    }}
+                >
+                <IconButton
+                style={{ alignSelf: 'flex-end' }}
+                onClick={handleModalClose}
+                >
+                <CloseIcon />
+                </IconButton>
+                <h3 style={{ marginTop: -10, marginBottom: '20px' }}>Choose Filters</h3>
+                <FormGroup>
+                    {categories.map((category) => (
+                    <FormControlLabel
+                        key={category.id}
+                        control={
+                        <Checkbox
+                            checked={selectedCategories.includes(category.name)}
+                            onChange={handleCategoryChange}
+                            name={category.name}
+                        />
+                        }
+                    label={category.name}
+                    />
+                    ))}
+                </FormGroup>
                     <TextField
-                                type="text"
-                                label="Keywords (separated by commas)"
-                                variant="outlined"
-                                style={{marginTop: '10px'}}
-                                InputProps={{
-                                    startAdornment: <InputAdornment position="start">Keywords</InputAdornment>,
-                                }}
-                                value={selectedKeywords}
-                                onChange={handleKeywordsChange}
-                            />
+                    type="text"
+                    label="Keywords (separated by commas)"
+                    variant="outlined"
+                    style={{ marginTop: '10px' }}
+                    InputProps={{
+                        startAdornment: (
+                        <InputAdornment position="start">Keywords</InputAdornment>
+                        ),
+                    }}
+                    value={selectedKeywords}
+                    onChange={handleKeywordsChange}
+                    />
                 </div>
                 </Modal>
                 <Button variant="contained" color="primary" onClick={handleSearch}>
@@ -362,7 +387,7 @@ function Home() {
                 <Button variant="contained" color="primary" onClick={handleSaveSearch}>
                     Save Search
                 </Button>
-            </div>
+                </div>
             <div ref={ref}>
             <GoogleMap
                 id="map"
