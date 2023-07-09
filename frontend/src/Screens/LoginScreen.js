@@ -19,17 +19,12 @@ function LoginScreen() {
   const [password, setPassword] = useState('');
   const [user, SetUser] = useContext(UserContext);
   const navigate = useNavigate();
-  // useEffect(() => {
-  //   if(user){
-  //     //mavigate to home page
-  //   }
-  // }, [user]);
 
-  // useEffect(() => {
-  //   console.log(password)
-  // }, [password]);
-
-  //function that makes a call for login 
+  /**
+  * The `login` function sends a POST request to a login API endpoint with the provided username and password, 
+  * and stores the returned user data in local storage. The e is used to prevent the page from refreshing 
+  * when the form is submitted.
+  */
   const login = async(e) => {
     e.preventDefault();
     try {
@@ -59,6 +54,7 @@ function LoginScreen() {
     }
   }
 
+  // handle the 'Back' button
   const handleBack = () => {
     navigate(-1);
   }

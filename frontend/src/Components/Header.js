@@ -17,6 +17,7 @@ function Header() {
   const [searchTerm, setSearchTerm, onSearch] = useState('');
   const [user, SetUser] = useContext(UserContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const location = useLocation();
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -31,22 +32,23 @@ function Header() {
     onSearch(searchTerm);
   };
 
+/*The `logout` function clears the user data and removes it from the local storage.*/
   const logout = () => {
     SetUser(undefined);
-    // put user in local storage
     localStorage.removeItem("User");
   }
-
-  const location = useLocation();
 
   return (
     <div>
       <nav className={location.pathname === '/' ? 'navbar-home': 'navbar-other'}>
+        
+        {/* component for the left side on the navigation bar */}
         <div className="nav-left">
           <LinkContainer style={{width:"80px", height:"80px", cursor : 'pointer'}} to="/">
             <img style={{width:"20px", height:"20px"}} src="/geoxplorers_logo.png" alt="logo"/>            
           </LinkContainer>
-          {/* <div style={{zIndex: location.pathname !== '/' && 0}}> */}
+
+            {/* make the search filter from pages different to homepage */}
             <form className= "search-bar" style={{zIndex: location.pathname !== '/' && -999, opacity: location.pathname !== '/' && 0 }} onSubmit={handleFormSubmit}>
               <input
                 className="search-input"
@@ -75,14 +77,12 @@ function Header() {
                   <MdOutlineSaveAlt/> Save Search
                 </a>
               </li>
-            </ul>
-          {/* </div> */}
-          
+            </ul>  
         </div>
         
 
-          {/* the items are going to change if the user is logged in or not */}
-          
+          {/* the items are going to differ depending on if the user is logged in or not */}
+          {/* this is the right side of the navbar */}
           {user ?
             <ul className="navbar-nav">
               {user.is_staff &&
@@ -114,6 +114,8 @@ function Header() {
               </li>
             </ul>
           :
+
+            // if the user isn't logged in the right side of the navigation bar only has sign in/up function 
             <ul className="navbar-nav">
               <li className="nav-item">
                 <a className="nav-link" href="/login/">

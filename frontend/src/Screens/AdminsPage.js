@@ -6,7 +6,6 @@ import axios from 'axios';
 import Modal from 'react-bootstrap/Modal';
 import "../Styles/Admin.css";
 
-import { MdArrowBack } from 'react-icons/md';
 
 function AdminsPage() {
 
@@ -20,12 +19,17 @@ function AdminsPage() {
     const [file, setFile] = useState();
     const [success, setSuccess] = useState(false);
 
+    // open and close modals, for pois and categories
     const handleClose_poi = () => setShow_poi(false);
     const handleShow_poi = () => setShow_poi(true);
 
     const handleClose_ctg = () => setShow_ctg(false);
     const handleShow_ctg = () => setShow_ctg(true);
 
+    /**
+    *`getPois` and `getCtgs` make API requests to retrieve points of interest 
+    *and categories respectively.
+    */
     async function getPois() {
         try {
             const config = {
@@ -68,6 +72,8 @@ function AdminsPage() {
         }
     }
 
+
+    /* If the user isn't staff, the user will be navigated to the homepage. */
     useEffect(() => {
         if ((user && user.is_staff === false)) {
             navigate('/');
@@ -91,6 +97,14 @@ function AdminsPage() {
         // setPreview(URL.createObjectURL(file))
     }
 
+    /**
+     * The function `saveFile` is an asynchronous function that saves a file by sending a POST request
+     * to a specified API endpoint, either for importing points of interest (POIs) or categories, and
+     * handles success and error cases accordingly.
+     * @param isPoi - isPoi is a boolean parameter that determines whether the file being saved is a
+     * Point of Interest (POI) file or a category file. If isPoi is true, the file will be saved as a
+     * POI file. If isPoi is false, the file will be saved as
+     */
     const saveFile = async(isPoi) => {
         try {
             const form = new FormData();
@@ -138,13 +152,12 @@ function AdminsPage() {
         }
     }
 
+    {/** 
+
+     */}
     if (loading) {
         return <div></div>
     }
-
-    // const handleBack = () => {
-    //     navigate(-1);
-    // }
 
     return (
         <div>
@@ -199,9 +212,6 @@ function AdminsPage() {
             
             <div className="admin-container">
                 
-                {/* <button className="back-button" onClick={handleBack}>
-                    <MdArrowBack /> Back
-                </button> */}
                 <div className="admin-container-head">
                     <h2 className="admin-title">
                         My Admin's Page
