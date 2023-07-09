@@ -28,6 +28,10 @@
   color: #61dafb;
 }
 
+/* body {
+  background-color: rgba(2, 76, 86, 0.1);
+} */
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -36,3 +40,147 @@
     transform: rotate(360deg);
   }
 }
+
+
+.layout {
+  background-color: rgba(2, 76, 86, 0.1);
+  height: fit-content;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.login-container {
+  /* padding: 20%; */
+  display: flex;
+  justify-content: center;
+}
+
+.nav-bar {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 99;
+  background-color: rgba(255,255,255,0.5);
+  border: 3px #61dafb;
+}
+
+/*  Typography 
+body {
+  font-family: 'Roboto', sans-serif; 
+}
+
+.button {
+  display: inline-block;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  border-radius: 4px;
+  border: none;
+  color: #fff;
+  background-color: #4184F3;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #3367D6;
+}
+
+.form-container {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-weight: 500;
+}
+
+.tab-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.tab-header {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tab-button {
+  flex: 1 1 100%;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  border: none;
+  color: #fff;
+  background-color: #4285F4;
+  cursor: pointer;
+}
+
+.tab-button.active {
+  background-color: #3367D6; 
+}
+
+.tab-content {
+  border: 1px solid #ddd;
+  padding: 16px;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  margin-bottom: 16px;
+  width: 30%;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.card-content {
+  margin-bottom: 16px;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.card-button {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  border: none;
+  color: #fff;
+  background-color: #4285F4; 
+  cursor: pointer;
+}
+
+.card-button:hover {
+  background-color: #3367D6; 
+} */
