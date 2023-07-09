@@ -19,7 +19,7 @@
   top: 0;
   right: 0%;
   width: 100%;
-  background-color: hsla(208, 36%, 14%, 0.0);
+  background-color: hsla(208, 36%, 14%, 0);
   padding: 15px;
   height: 13vh;
 }
@@ -98,6 +98,7 @@
   background-color: #f1f3f4;
   margin-left: 20px;
   box-shadow: 3px 3px 3px rgba(129, 129, 129, 0.2);
+  /* margin-right: 40px; */
 }
 
 .nav-link {
@@ -118,7 +119,7 @@
   z-index: 1;
   display: none;
   height: fit-content;
-  min-width: 100px;
+  min-width: 200px;
   padding: 5px 0;
   width: 110px;
   /* margin: 0; */
