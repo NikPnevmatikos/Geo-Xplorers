@@ -98,11 +98,10 @@ function AdminsPage() {
     }
 
     /**
-     * The function `saveFile` is an asynchronous function that saves a file by sending a POST request
-     * to a specified API endpoint, either for importing points of interest (POIs) or categories, and
-     * handles success and error cases accordingly.
-     * @param isPoi - isPoi is a boolean parameter that determines whether the file being saved is a
-     * Point of Interest (POI) file or a category file. If isPoi is true, the file will be saved as a
+     * The function `saveFile` saves a file by sending a POST request to a specified API endpoint, either for 
+     * importing points of interest or categories, and handles success and error cases accordingly.
+     * isPoi is a boolean parameter that determines whether the file being saved is a
+     * Point of Interest file or a category file. If isPoi is true, the file will be saved as a
      * POI file. If isPoi is false, the file will be saved as
      */
     const saveFile = async(isPoi) => {
@@ -152,9 +151,6 @@ function AdminsPage() {
         }
     }
 
-    {/** 
-
-     */}
     if (loading) {
         return <div></div>
     }

@@ -1,14 +1,13 @@
-import React from 'react'
+import React from "react";
 import Map from "../Components/Map";
-import Header from '../Components/Header';
+import Header from "../Components/Header";
 
-function HomeScreen() {
-
+function HomeScreen(props) {
   return (
     <div>
-      <Map/>           
+      <Map {...props} />
     </div>
-  )
+  );
 }
 
-export default HomeScreen
+export default HomeScreen;

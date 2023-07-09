@@ -19,7 +19,7 @@
   top: 0;
   right: 0%;
   width: 100%;
-  background-color: hsla(208, 36%, 14%, 0.0);
+  background-color: hsla(208, 36%, 14%, 0);
   padding: 15px;
   height: 13vh;
 }
@@ -98,6 +98,7 @@
   background-color: #f1f3f4;
   margin-left: 20px;
   box-shadow: 3px 3px 3px rgba(129, 129, 129, 0.2);
+  /* margin-right: 40px; */
 }
 
 .nav-link {
@@ -118,9 +119,9 @@
   z-index: 1;
   display: none;
   height: fit-content;
-  min-width: 100px;
+  min-width: 170px;
   padding: 5px 0;
-  width: 110px;
+  width: 170px;
   /* margin: 0; */
   font-size: 14px;
   text-align: left;
@@ -128,14 +129,14 @@
   /* border: 1px solid #ccc; */
   border-radius: 7px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-  transform: translateY(54%);
-  /* transform: translateX(50%); */
+  transform: translateY(40%);
+  /* transform: translateX(1%); */
 }
 
 .dropdown-item {
   display: block;
   height: fit-content;
-  padding: 5px 20px;
+  padding: 5px 10px;
   font-size: 16px;
   font-weight: normal;
   line-height: 1.5;

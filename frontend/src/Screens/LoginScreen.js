@@ -8,11 +8,6 @@ import { UserContext } from '../App';
 import { useNavigate } from 'react-router-dom';
 import { MdLogin, MdArrowBack } from 'react-icons/md'
 
-// // Create a new context for authentication
-// const AuthContext = React.createContext();
-// // Custom hook for using the authentication context
-// const useAuth = () => useContext(AuthContext);
-
 function LoginScreen() {
 
   const [username, setUsername] = useState('');
@@ -61,28 +56,34 @@ function LoginScreen() {
 
   return (
     <div>
+
       <Container className="login-container">
-        
-      <button className="back-button" onClick={handleBack}>
-        <MdArrowBack /> Back
-      </button>
+          
+        <button className="back-button" onClick={handleBack}>
+          <MdArrowBack /> Back
+        </button>
+ 
         <form className="login" onSubmit={(e) => login(e)}>
           <h3>Sign In</h3>
           <div className="login-content">
+            
             <label>Username:</label>
             <input 
               type="text" 
               placeholder="Enter Username" 
               onChange={(e)=> setUsername(e.target.value)}/>
             <br/>
+            
             <label>Password:</label>
             <input 
               type="password" 
               placeholder="Enter Password"
               onChange={(e) => setPassword(e.target.value)}/>
+            
             <button type='submit'>
               <span style={{display: "inline-flex", alignItems: "center"}}>Login <MdLogin style={{marginTop: "2px"}}/></span>
             </button>
+            
             <p className="bottom-text"><em><strong>Don't have an account?</strong> Register <a href="/register">here</a>.</em></p>
           </div>
         </form>
