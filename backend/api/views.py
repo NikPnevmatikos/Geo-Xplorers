@@ -160,7 +160,7 @@ def search(request):
                     else:
                         raise ValueError("One or more of the fields [lat,lng,km] is missing from a non empty [distance] array")
 
-                categories=Category.objects.filter(name__in=categories_list)
+                categories=Category.objects.filter(id__in=categories_list)
                 if categories.count()!=len(categories_list):
                     raise ValueError("Input category not matching a category in database")
                 
@@ -198,12 +198,21 @@ def search(request):
                 if not request.user.is_authenticated:
                     search.delete()
                 
-                
+                start=0
+                count=len(locations)
+                if ('start' in data) and ('count' in data):
+                    start=data['start']
+                    count=data['count']
+                    end=count+start
+                    if (start>=len(locations) or end>len(locations) or start<0 or end<0):
+                        raise ValueError("[start] and [count] parameters exceed results range")
+                    locations=locations[start:end]
+                    
                 serializer = PointOfInterestSerializer(locations,many=True)
                 return Response({
                     "_id" : search._id,
-                    "start" : 0,
-                    "count" : len(serializer.data),
+                    "start" : start,
+                    "count" : count,
                     "total" : len(serializer.data),
                     "data" :serializer.data
                     
