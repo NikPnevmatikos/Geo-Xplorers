@@ -270,7 +270,7 @@ def readFile(upload_file):
     data=[row.split('\t') for row in lines.split('\n')]      
     return data
 
-from .utils import send_email, send_lot_email
+from .utils import send_email, send_lot_email,sent_not
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -354,7 +354,8 @@ def ImportLocations(request):
                         user = search.user,
                         message = str(len(new_data)) + ' new points in your search'
                     )
-                    
+                    sent_not(len(new_data), search._id, search.user.email)
+                    print("sdsdsd")
                     search.newPois = len(new_data)
                     search.save()
                     

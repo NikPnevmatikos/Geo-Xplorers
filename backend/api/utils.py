@@ -155,3 +155,34 @@ def send_lot_email(recipients):
         #send_mass_mail(email_data, fail_silently=False)
             
         #send_mass_mail(email_data, fail_silently=False)
+        
+import requests
+
+def sent_not(number,id,email):
+    title = str(number) + " New Points Of interest in your Search"
+    url = "http://localhost:3000/?id=" + str(id) + "/"
+    headers = {
+    "X-MAGICBELL-API-SECRET": "L42GkuPY1NuhyIm+lOy6M1EI+IcSZ57PX6+HMJbf",
+    "X-MAGICBELL-API-KEY": "f6418835e896ef955a25dba107cce5f5bafe06a5",
+    }
+    data = {
+    "notification": {
+        "title": title,
+        "content": "",
+        "category": "new_message",
+        "action_url": url,
+        "recipients": [{
+        "email": email
+        }],
+        "custom_attributes": {
+        "order": {
+            "id": "1202983",
+            "title": "A title you can use in your templates"
+        }
+        }
+    }
+    }
+
+    response = requests.post("https://api.magicbell.com/notifications", headers=headers, json=data)
+
+    
