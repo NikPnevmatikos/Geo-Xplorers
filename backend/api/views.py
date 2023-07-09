@@ -160,16 +160,24 @@ def search(request):
                     else:
                         raise ValueError("One or more of the fields [lat,lng,km] is missing from a non empty [distance] array")
                 categoryIds=[]
-                for id in categories_list:
-                    if not isinstance(id,str):
-                        raise ValueError("category ids must be in string format")
-                    try:
-                        categoryIds.append(int(id))
-                    except ValueError:
-                        raise ValueError("category ids must be representation of numbers")
-                categories=Category.objects.filter(id__in=categoryIds)
-                if categories.count()!=len(categoryIds):
-                    raise ValueError("Input category not matching a category in database")
+                try:
+                    for id in categories_list:
+                        if not isinstance(id,str):
+                            raise ValueError("category ids must be in string format")
+                        try:
+                            categoryIds.append(int(id))
+                        except ValueError:
+                            raise ValueError("category ids must be representation of numbers")
+                    
+                    categories=Category.objects.filter(id__in=categoryIds)
+                    if categories.count()!=len(categoryIds):
+                        raise ValueError("Input category not matching a category in database")
+                except ValueError:
+                    categories=Category.objects.filter(name__in=categories_list)
+                    if categories.count()!=len(categories_list):
+                        raise ValueError("Input category not matching a category in database")
+                
+                
                 
                 user=None
                 if request.user.is_authenticated:
