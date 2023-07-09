@@ -6,7 +6,7 @@ import "../Styles/Login.css";
 import axios from 'axios';
 import { UserContext } from '../App';
 import { useNavigate } from 'react-router-dom';
-
+import { MdArrowBack } from 'react-icons/md';
 // // Create a new context for authentication
 // const AuthContext = React.createContext();
 
@@ -65,9 +65,17 @@ function RegisterScreen() {
     }
   }
 
+  const handleBack = () => {
+    navigate(-1);
+  }
+
   return (
     <div>
         <Container className="login-container" style={{paddingBottom: "950px"}}>
+          
+        <button className="back-button" onClick={handleBack}>
+          <MdArrowBack /> Back
+        </button>
         {/* the className type is login because it's similar to the login one */}
         <form className="login" 
             style={{top: "500px"}}

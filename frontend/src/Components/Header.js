@@ -10,7 +10,8 @@ import Button from 'react-bootstrap/Button';
 import { Router, Routes, Route, useLocation } from 'react-router-dom';
 import LoginScreen from '../Screens/LoginScreen.js';
 import { UserContext } from '../App.js';
-
+import {  MdManageAccounts, MdFilterAlt, MdOutlineWifiTethering, MdSearch, 
+          MdAccountCircle, MdLogin, MdPersonAdd, MdOutlineSaveAlt, MdLogout } from 'react-icons/md';
 
 function Header() {
   const [searchTerm, setSearchTerm, onSearch] = useState('');
@@ -42,27 +43,41 @@ function Header() {
     <div>
       <nav className={location.pathname === '/' ? 'navbar-home': 'navbar-other'}>
         <div className="nav-left">
-          <LinkContainer style={{width:"12%", height:"12%", cursor : 'pointer'}} to="/">
+          <LinkContainer style={{width:"80px", height:"80px", cursor : 'pointer'}} to="/">
             <img style={{width:"20px", height:"20px"}} src="/geoxplorers_logo.png" alt="logo"/>            
           </LinkContainer>
-          <form className= "search-bar" onSubmit={handleFormSubmit}>
-            <input
-              className="search-input"
-              type="text"
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={handleInputChange}
-            />
-            <button className="search-button" type="submit">Search</button>
-          </form>
-          <ul className="navbar-nav">
-            <li className="nav-item">
-              <a className="nav-link" href="">
-                Radius
-              </a>
-            </li>
-
-          </ul>
+          {/* <div style={{zIndex: location.pathname !== '/' && 0}}> */}
+            <form className= "search-bar" style={{zIndex: location.pathname !== '/' && -999, opacity: location.pathname !== '/' && 0 }} onSubmit={handleFormSubmit}>
+              <input
+                className="search-input"
+                type="text"
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={handleInputChange}
+              />
+              <button className="search-button" type="submit">
+                <MdSearch/> Search
+              </button>
+            </form>
+            <ul className="navbar-nav" style={{zIndex: location.pathname !== '/' && -999, opacity: location.pathname !== '/' && 0 }}>
+              <li className="nav-item">
+                <a className="nav-link" href="">
+                  <MdOutlineWifiTethering/> Radius
+                </a>
+              </li>
+              <li className="nav-item" style={{width: "90px"}}>
+                <a className="nav-link" href="">
+                  <MdFilterAlt/> Filter
+                </a>
+              </li>
+              <li className="nav-item" style={{width: "130px"}}>
+                <a className="nav-link" href="">
+                  <MdOutlineSaveAlt/> Save Search
+                </a>
+              </li>
+            </ul>
+          {/* </div> */}
+          
         </div>
         
 
@@ -71,14 +86,15 @@ function Header() {
           {user ?
             <ul className="navbar-nav">
               {user.is_staff &&
-                <li className="nav-item" style={{width: "130px"}}>
+                <li className="nav-item" style={{width: "135px"}}>
                   <a className="nav-link" href="/admin_page/">
-                    Admin's Page
+                  <MdManageAccounts/> Admin's Page 
                   </a>
                 </li>
               }
               
-              <li className={`nav-item dropdown ${isDropdownOpen ? 'show' : ''}`}>
+              <li className={`nav-item dropdown ${isDropdownOpen ? 'show' : ''}`} 
+                  style={{width: "110px"}}>
                 <a
                   className="nav-link dropdown-toggle"
                   href="#"
@@ -89,10 +105,10 @@ function Header() {
                 </a>
                 <div className={`dropdown-menu ${isDropdownOpen ? 'show' : ''}`}>
                   <a className="dropdown-item">
-                    Profile
+                    <MdAccountCircle/> Profile
                   </a>
                   <a className="dropdown-item" onClick={logout}>
-                    Logout
+                    <MdLogout/> Logout
                   </a>
                 </div>
               </li>
@@ -100,10 +116,14 @@ function Header() {
           :
             <ul className="navbar-nav">
               <li className="nav-item">
-                <a className="nav-link" href="/login/">Sign In</a>
+                <a className="nav-link" href="/login/">
+                  <MdLogin/> Sign In
+                </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="/register/">Register</a>
+                <a className="nav-link" href="/register/">
+                   <MdPersonAdd/> Register
+                </a>
               </li>
             </ul>
           }

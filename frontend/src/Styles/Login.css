@@ -109,3 +109,29 @@ body {
 .login-content > p > em > a {
     color: rgba(2, 128, 144, 1);
 }
+
+.back-button {
+    position: absolute;
+    margin-top: 110px;
+    margin-left: 20px;
+    top: 10px;
+    left: 10px;
+
+    border-radius: 7px;
+    height: 40px;
+    /* width: 150px; */
+    padding-left: 13px;
+    padding-right: 13px;
+    
+    justify-content: center;
+    background-color: white;
+    box-shadow: 3px 3px 3px rgba(129, 129, 129, 0.3);
+    border-style: hidden ;
+
+    font-size: 17px;
+    font-weight: normal;
+    line-height: 2;
+    /* width: max-content; */
+    /* font-family: Roboto; */
+    /* color: black;   */
+}
