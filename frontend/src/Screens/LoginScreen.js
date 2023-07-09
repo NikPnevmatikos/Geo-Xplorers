@@ -6,6 +6,7 @@ import "../Styles/Login.css";
 import axios from 'axios';
 import { UserContext } from '../App';
 import { useNavigate } from 'react-router-dom';
+import { MdLogin, MdArrowBack } from 'react-icons/md'
 
 // // Create a new context for authentication
 // const AuthContext = React.createContext();
@@ -58,9 +59,17 @@ function LoginScreen() {
     }
   }
 
+  const handleBack = () => {
+    navigate(-1);
+  }
+
   return (
     <div>
       <Container className="login-container">
+        
+      <button className="back-button" onClick={handleBack}>
+        <MdArrowBack /> Back
+      </button>
         <form className="login" onSubmit={(e) => login(e)}>
           <h3>Sign In</h3>
           <div className="login-content">
@@ -75,7 +84,9 @@ function LoginScreen() {
               type="password" 
               placeholder="Enter Password"
               onChange={(e) => setPassword(e.target.value)}/>
-            <button type='submit'>Login</button>
+            <button type='submit'>
+              <span style={{display: "inline-flex", alignItems: "center"}}>Login <MdLogin style={{marginTop: "2px"}}/></span>
+            </button>
             <p className="bottom-text"><em><strong>Don't have an account?</strong> Register <a href="/register">here</a>.</em></p>
           </div>
         </form>
