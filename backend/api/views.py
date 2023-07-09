@@ -379,7 +379,6 @@ def ImportLocations(request):
                         message = str(len(new_data)) + ' new points in your search'
                     )
                     sent_not(len(new_data), search._id, search.user.email)
-                    print("sdsdsd")
                     search.newPois = len(new_data)
                     search.save()
                     

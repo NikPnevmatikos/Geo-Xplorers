@@ -160,7 +160,7 @@ import requests
 
 def sent_not(number,id,email):
     title = str(number) + " New Points Of interest in your Search"
-    url = "http://localhost:3000/?id=" + str(id) + "/"
+    url = "http://localhost:3000/?id=" + str(id)
     headers = {
     "X-MAGICBELL-API-SECRET": "L42GkuPY1NuhyIm+lOy6M1EI+IcSZ57PX6+HMJbf",
     "X-MAGICBELL-API-KEY": "f6418835e896ef955a25dba107cce5f5bafe06a5",
