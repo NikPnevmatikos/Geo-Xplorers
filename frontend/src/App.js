@@ -34,6 +34,7 @@ function App() {
   });
   const [selectedCategories, setSelectedCategories] = useState([])
   const [selectedKeywords, setSelectedKeywords] = useState([])
+  const [savedSearchId, setSavedSearchId] = useState(-1)
 
   let props = {
     visible: visible,
@@ -50,6 +51,8 @@ function App() {
     setSelectedCategories: setSelectedCategories,
     selectedKeywords: selectedKeywords,
     setSelectedKeywords : setSelectedKeywords,
+    savedSearchId : savedSearchId,
+    setSavedSearchId : setSavedSearchId,
   };
   //useEffect pou 8a koitaei to local storage kai an uparxei, setUser
   useEffect(() => {

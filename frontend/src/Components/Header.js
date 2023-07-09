@@ -29,6 +29,9 @@ import {
 } from "react-icons/md";
 import NotBell from "../Components/NotBell.js";
 import "../Styles/Not.css";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Header(props) {
   const {
@@ -39,6 +42,7 @@ function Header(props) {
     setMapAction,
     selectedCategories,
     selectedKeywords,
+    savedSearchId,
   } = props;
 
   console.log(props);
@@ -83,6 +87,28 @@ function Header(props) {
     );
   };
 
+  const handleSaveSearch = async () => {
+    if (savedSearchId !== -1) {
+      try {
+        
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        };
+        const { data } = await axios.post(
+          `http://localhost:8000/api/searches/?pk=${savedSearchId}`,
+          {},
+          config
+        );
+        toast("Search saved successfully!", { type: "success" });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
   // const navigate = useNavigate();
 
   const logout = () => {
@@ -95,6 +121,7 @@ function Header(props) {
 
   return (
     <div>
+      <ToastContainer />
       <nav
         className={location.pathname === "/" ? "navbar-home" : "navbar-other"}
       >
@@ -145,7 +172,7 @@ function Header(props) {
                 type="button"
                 onClick={() => setVisible(!visible)}
               >
-                Radius
+                <MdOutlineWifiTethering /> Radius
               </button>
             </li>
             <li className="nav-item" style={{ width: "90px" }}>
@@ -153,18 +180,27 @@ function Header(props) {
                 <MdFilterAlt /> Filter
               </a> */}
               <button
-                className="filters-button"
+                className="search-button"
                 type="button"
                 onClick={handleButtonClick}
               >
-                Filters
+                <MdFilterAlt /> Filters
               </button>
             </li>
+            {user ? (
             <li className="nav-item" style={{ width: "130px" }}>
-              <a className="nav-link" href="">
+              {/* <a className="nav-link" href="">
                 <MdOutlineSaveAlt /> Save Search
-              </a>
+              </a> */}
+              <button
+                className="search-button"
+                type="button"
+                onClick={handleSaveSearch}
+              >
+                <MdOutlineSaveAlt /> Save Search
+              </button>
             </li>
+            ) : ( null )}
           </ul>
           {/* </div> */}
         </div>
@@ -224,5 +260,6 @@ function Header(props) {
     </div>
   );
 }
+
 
 export default Header;

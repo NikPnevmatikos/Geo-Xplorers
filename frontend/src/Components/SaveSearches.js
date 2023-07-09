@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import CardSkeleton from './CardSkeleton';
 import { grey } from '@mui/material/colors';
 
+
 // import CardSkeleton from './CardSkeleton';
 const MAX_TEXT_SIZE = 100; // Set the maximum text size here
 
@@ -23,6 +24,7 @@ export default function Save_Searches() {
     const [deleted, setDeleted] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [selectedItemId, setSelectedItemId] = useState(null);
+    const [user, setUser] = useContext(UserContext);
 
     const handleShowMore = (itemId) => {
         setExpandedItemIds((prevExpandedItemIds) => [...prevExpandedItemIds, itemId]);
@@ -90,7 +92,6 @@ export default function Save_Searches() {
     };
 
     // const [pois, setPois] = useState([]);
-    const [user, setUser] = useContext(UserContext);
 
 
     // const navigate_logout = useNavigate();
@@ -107,8 +108,7 @@ export default function Save_Searches() {
                 const config = {
                     headers: {
                         'Content-Type': 'application/json',
-                        // Authorization: `Bearer ${user.token}`,
-                        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzODU3ODE2LCJpYXQiOjE2ODg2NzM4MTYsImp0aSI6ImE3MGQ3OGMzNmYzOTQyMTNiNzYxNGUxZTE0NzdkNDFmIiwidXNlcl9pZCI6Mn0.QJpT6Vtp9d_B6G7f4chz34k_dJYWk-ILc9fvLQf5IjQ`
+                        Authorization: `Bearer ${user.token}`,
                     },
                 };
                 const response = await axios.get('http://localhost:8000/api/searches/?type=saved', config);
