@@ -31,7 +31,8 @@ import "react-toastify/dist/ReactToastify.css";
 function Map(props) {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    // googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    googleMapsApiKey: "AIzaSyBZ1a96JQbH-jmgz79ItO2cGlIxv2luZNI"
   });
 
   const {
@@ -205,7 +206,7 @@ function Map(props) {
       }));
       setPoints(points);
       if (response.length === 0) {
-        window.alert("No results found");
+        toast("No results found", { type: "error" });
         console.log("No results found");
       }
     } catch (error) {
@@ -350,6 +351,7 @@ function Map(props) {
             fullscreenControl: false, // Remove fullscreen button
           }}
         >
+          <ToastContainer />
           {points.map((point, index) => (
             <MarkerF
               key={index}
