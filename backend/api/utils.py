@@ -2,6 +2,7 @@ from api.models import PointOfInterest, Category, Keywords
 from django.db.models import Q,F
 from decimal import Decimal
 
+#TODO remove old search function
 def search_point_of_interest(data):
     # Search logic here
 
@@ -48,6 +49,15 @@ def search_point_of_interest(data):
 
 
 def addToSaved(search):
+    """
+    The function addToSaved takes a search object, saves it with a new id, adds categories, keywords,
+    and cache locations to the search object, sets subscribed_search to True, and saves the search
+    object again before returning it.
+    
+    :param search: The "search" parameter is an object that represents a search query. It has the
+    following attributes:
+    :return: the "search" object after it has been modified and saved.
+    """
     categories = search.categories
     keywords = search.keywords
     cache_locations = search.cache_locations
@@ -91,6 +101,14 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
 def send_lot_email(recipients):
+        """
+        The function `send_lot_email` sends an email to each recipient with information about new points of
+        interest that match their search criteria.
+        
+        :param recipients: A list of dictionaries, where each dictionary represents a recipient and contains
+        the following keys:
+        """
+        
         subject = 'Stay in the Loop: New Points of Interest Match Your Search Criteria!'
         
         # 'search': {

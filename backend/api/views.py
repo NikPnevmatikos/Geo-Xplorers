@@ -32,12 +32,23 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 # The class MyUserView is an API view that allows for creating and retrieving user information.
 class MyUserView(APIView):
-    #POST user information and add him to database
+
     def post(self,request,*args,**kwargs):
+        """
+        The above function creates a new user with the provided data and returns a response with the
+        serialized user data, or an error message if there is already an account with the same email or
+        username.
+        
+        :param request: The `request` parameter is an object that represents the HTTP request made by
+        the client. It contains information such as the request method (GET, POST, etc.), headers, body,
+        and query parameters
+        :return: The code is returning a response with the serialized data of the created user if the
+        user creation is successful. If there is an exception, it returns a response with a message
+        indicating that there is already an account using the provided email or username.
+        """
         data = request.data
         try:
-            #if data.contains("first_name"):
-            #   return Response("First Name",status=status.HTTP_400_BAD_REQUEST)
+
             user = User.objects.create(
                 first_name = data['first_name'],
                 last_name = data['last_name'], 
@@ -45,9 +56,7 @@ class MyUserView(APIView):
                 email = data['email'],
                 password = make_password(data['password'])
             )
-#            myuser = MyUser.objects.create(
-#                user = user
-#            )
+
             serializer = UserSerializerWithToken(user, many = False)
             
             return Response(serializer.data)
@@ -55,8 +64,16 @@ class MyUserView(APIView):
             message = {'detail' : 'There is already an account using this email or username.'}
             return Response(message, status=status.HTTP_400_BAD_REQUEST)
         
-    #GET user info by requested user
     def get(self, request, *args, **kwargs):
+        """
+        This function checks if the user is authenticated and returns the serialized data of the user if
+        they are authenticated.
+        
+        :param request: The `request` parameter is an object that represents the HTTP request made by
+        the client. It contains information such as the request method (GET, POST, etc.), headers, query
+        parameters, and the body of the request
+        :return: The code is returning a response with the serialized data of the authenticated user.
+        """
         if not request.user.is_authenticated:
             return Response({"details":"Authentication credentials were not provided."},status=status.HTTP_401_UNAUTHORIZED)
 
@@ -68,12 +85,25 @@ class MyUserView(APIView):
 
 
 
-# defines a view for creating and retrieving PointOfInterest objects with
-# associated Category and Keyword objects.
+
 from .utils import search_point_of_interest,addToSaved
 
 @api_view(['POST'])
 def search(request):
+    """
+    The `search` function takes a request and performs a search based on the provided data, returning a
+    response with the matching locations.
+    
+    :param request: The `request` parameter is an object that contains information about the HTTP
+    request made to the server. It includes data such as the request method (GET, POST, etc.), headers,
+    query parameters, and the request body
+    :return: a Response object with a JSON payload. The JSON payload includes the following fields:
+    - "_id": The ID of the search.
+    - "start": The starting index of the search results.
+    - "count": The number of search results returned.
+    - "total": The total number of search results available.
+    - "data": An array of search results, serialized using the PointOf
+    """
 
     data=request.data
     search_id=request.query_params.get('pk')
@@ -187,6 +217,18 @@ import base64
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def upload_image(request, pk):
+    """
+    The `upload_image` function takes a request and a primary key as input, decodes an image from the
+    request data, saves it to a file, and associates it with a search object.
+    
+    :param request: The `request` parameter is an object that represents the HTTP request made by the
+    client. It contains information such as the request method, headers, and data
+    :param pk: The "pk" parameter is the primary key of the Search object that we want to associate the
+    uploaded image with. It is used to retrieve the specific Search object from the database
+    :return: a Response object. If the image is successfully saved, it will return a response with the
+    message "Image Saved". If an error occurs, it will return a response with the message "Error
+    occurred" and a status code of 500.
+    """
     try:
         search = Search.objects.get(_id=pk)
         #write the decoded data back to original format in  file
@@ -215,6 +257,15 @@ def get_all_points(request):
     return Response(serializer.data)
 
 def readFile(upload_file):
+    """
+    The function `readFile` reads the contents of an uploaded file, decodes it using UTF-8 encoding,
+    removes any carriage return characters, splits the contents into lines, and then splits each line
+    into a list of values separated by tabs.
+    
+    :param upload_file: The parameter `upload_file` is expected to be a file object that is opened in
+    binary mode. It should be a file that you want to read and process
+    :return: a list of lists, where each inner list represents a row of data from the uploaded file.
+    """
     lines=upload_file.read().decode('utf-8').replace('\r','')
     data=[row.split('\t') for row in lines.split('\n')]      
     return data
@@ -344,6 +395,18 @@ def ImportLocations(request):
 @permission_classes([IsAuthenticated])
 @permission_classes([IsAdminUser])
 def ImportCategories(request):
+    """
+    The function `ImportCategories` imports categories from a file and saves them in the database,
+    returning a response with the serialized data.
+    
+    :param request: The `request` parameter is an object that represents the HTTP request made by the
+    client. It contains information such as the request method, headers, and body. In this case, it is
+    used to retrieve the uploaded file from the request body using `request.FILES.get('file')`
+    :return: a Response object. The specific response depends on the execution path of the code. If
+    there are no errors, it returns a Response object with the serialized data of the created
+    categories. If there is a ValueError, it returns a Response object with the details of the error and
+    a status code of 400 (Bad Request). If there is any other exception, it returns a Response object
+    """
     try:    
         with transaction.atomic():
             upload_file = request.FILES.get('file')

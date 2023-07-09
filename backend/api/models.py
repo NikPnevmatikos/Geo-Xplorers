@@ -3,14 +3,12 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Q,F
 from django.utils import timezone
-#from django.contrib.gis.geos import Point
 
 class Category(models.Model):
     _id = models.AutoField(primary_key=True, editable=False) 
      
     id=models.IntegerField(null=True, blank=True)
     name=models.CharField(max_length=60, null=True, blank=True)
-    #pois=models.ForeignKey(PointOfInterest,null=True,on_delete=models.CASCADE,related_name="categories")
     
     def __str__(self):
         return self.name
@@ -24,7 +22,6 @@ class Keywords(models.Model):
         return self.keyword
     
 class PointOfInterest(models.Model):
-    #Fields that a location object may contain
     _id = models.AutoField(primary_key=True, editable=False) 
 
     user = models.ForeignKey(User,on_delete=models.CASCADE,related_name="user")
@@ -44,7 +41,6 @@ class PointOfInterest(models.Model):
 
 
 class Search(models.Model):
-   #The list of available search criteria and optionally their values
     _id = models.AutoField(primary_key=True, editable=False)
 
     image = models.ImageField(null=True, blank=True, default='/defaultMap.png')
@@ -63,8 +59,31 @@ class Search(models.Model):
 
     def __str__(self):
         return self.text + " " + str(self._id) 
-    #
+    
     def __runOptimizedQuery(self,timestamp):
+        """
+        The function `__runOptimizedQuery` is used to run an optimized query on a database to retrieve a
+        set of PointOfInterest objects based on various filters such as timestamp, text, categories,
+        keywords, latitude, longitude, and kilometers.
+        
+        :param timestamp: The `timestamp` parameter is used to filter the results based on the
+        `timestampAdded` field. It retrieves all records with a `timestampAdded` greater than the
+        provided `timestamp`
+        :return: a queryset of PointOfInterest objects that match the specified conditions in the query.
+
+
+        Exact details on how the search logic functions are explained below:
+            If all of “latitude”, “longitude”, “kilometers” parameters exist then the results will be limited by whether or not the point of interest is inside the circle defined by the parameters.
+            If the “categories” parameter is present, then a location will be included in the final result only if at least one of it's categories matches the input category list
+            Likewise for the “keywords” parameter, if it is present, then a location will be included in the final result only if at least one of it's keywords matches the input keyword list
+            If the “text” parameter is present, it is always applied to the “title” and “description” attributes of the locations, and a location must also satisfy either one of the above to be of match.
+                In the case that no input categories have been given, then the “text” parameter is also applied to the categories.
+                Similarly for when the input keywords is missing, the “text” is applied to the keywords attribute
+                The previous two mean that in the event that no categories and no keywords are present, the “text” parameter can satisfy either one of the “title”,“description”,”categories”,”keywords” attributes of the location.
+                The matching for the “text” parameter works with by whether or not the attribute we match against contains a substring matching the “text” 
+                i.e If one location has “title”:”Lake Dunmore” and another has “categories”:[“big lakes”,...] then both will match the “text”:”lake” input parameter.
+
+        """
         query = Q()
         if timestamp is not None:
             query=(Q(timestampAdded__gt=timestamp))
@@ -102,6 +121,12 @@ class Search(models.Model):
         return queryset.all()
     
     def findMatchingLocations(self):
+        """
+        The function "findMatchingLocations" retrieves a list of locations from a cache, runs an
+        optimized query to get new locations, adds the new locations to the cache, updates the
+        timestamp, saves the changes, and returns the combined list of locations.
+        :return: a list of locations.
+        """
         locations=[location for location in self.cache_locations.all()]       
 
         new_locations=self.__runOptimizedQuery(self.timestamp)    
@@ -116,11 +141,19 @@ class Search(models.Model):
         return locations
         
     def findNewData(self,import_timestamp):
+        """
+        The function "findNewData" returns the result of running an optimized query using the given
+        import timestamp.
+        
+        :param import_timestamp: The import_timestamp parameter is a timestamp that represents the time
+        at which the data was imported. It is used as a reference point to find new data that has been
+        imported after this timestamp
+        :return: the result of the `__runOptimizedQuery` method.
+        """
         return self.__runOptimizedQuery(import_timestamp)
     
 
 class Announcement(models.Model):
-    # {image, message ,detailPage, receivedTime}
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     image = models.ImageField(null=True, blank=True, default='/MapIcon.png')
     message = models.CharField(max_length=200, null=True, blank=True)
