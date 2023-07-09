@@ -7,7 +7,13 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import Button from "react-bootstrap/Button";
-import { Router, Routes, Route, useLocation } from "react-router-dom";
+import {
+  Router,
+  Routes,
+  Route,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import LoginScreen from "../Screens/LoginScreen.js";
 import { UserContext } from "../App.js";
 import {
@@ -21,14 +27,35 @@ import {
   MdOutlineSaveAlt,
   MdLogout,
 } from "react-icons/md";
-
 import NotBell from "../Components/NotBell.js";
 import "../Styles/Not.css";
 
-function Header() {
-  const [searchTerm, setSearchTerm, onSearch] = useState("");
+function Header(props) {
+  const {
+    visible,
+    setVisible,
+    radius,
+    circleCenter,
+    setMapAction,
+    selectedCategories,
+    selectedKeywords,
+  } = props;
+
+  console.log(props);
+  const [searchTerm, setSearchTerm] = useState("");
+
   const [user, SetUser] = useContext(UserContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleButtonClick = () => {
+    setMapAction(true);
+  };
+
+  const handleSearchClick = () => {
+    props.setSearchV(searchTerm);
+  };
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -36,11 +63,24 @@ function Header() {
 
   const handleInputChange = (event) => {
     setSearchTerm(event.target.value);
+    //props.setSearchV(event.target.value);
   };
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    onSearch(searchTerm);
+    const cat = selectedCategories.toString();
+    const keywords = selectedKeywords.toString();
+    let lat = "";
+    let lng = "";
+    let km = "";
+    if (visible) {
+      lat = circleCenter.lat;
+      lng = circleCenter.lng;
+      km = radius;
+    }
+    navigate(
+      `/?text=${searchTerm}&categories=${cat}&keywords=${keywords}&lat=${lat}&lng=${lng}&km=${km}`
+    );
   };
 
   // const navigate = useNavigate();
@@ -49,7 +89,6 @@ function Header() {
     SetUser(undefined);
     // put user in local storage
     localStorage.removeItem("User");
-    // navigate('/');
   };
 
   const location = useLocation();
@@ -98,14 +137,28 @@ function Header() {
             }}
           >
             <li className="nav-item">
-              <a className="nav-link" href="">
-                <MdOutlineWifiTethering /> Radius
-              </a>
+              {/* <a className="nav-link" href="">
+                 <MdOutlineWifiTethering /> Radius
+               </a> */}
+              <button
+                className="search-button"
+                type="button"
+                onClick={() => setVisible(!visible)}
+              >
+                Radius
+              </button>
             </li>
             <li className="nav-item" style={{ width: "90px" }}>
-              <a className="nav-link" href="">
+              {/* <a className="nav-link" href="">
                 <MdFilterAlt /> Filter
-              </a>
+              </a> */}
+              <button
+                className="filters-button"
+                type="button"
+                onClick={handleButtonClick}
+              >
+                Filters
+              </button>
             </li>
             <li className="nav-item" style={{ width: "130px" }}>
               <a className="nav-link" href="">
@@ -130,7 +183,6 @@ function Header() {
                 </a>
               </li>
             )}
-
             <li
               className={`nav-item dropdown ${isDropdownOpen ? "show" : ""}`}
               style={{ width: "110px" }}
@@ -150,9 +202,7 @@ function Header() {
                 <a className="dropdown-item">
                   <MdAccountCircle /> Profile
                 </a>
-                <a className="dropdown-item" onClick={logout}>
-                  <MdLogout /> Logout
-                </a>
+                <a className="dropdown-item" onClick={logout}></a>
               </div>
             </li>
           </ul>
