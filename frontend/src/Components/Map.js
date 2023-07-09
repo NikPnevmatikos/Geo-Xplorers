@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, createRef } from "react";
+import React, { useState, useEffect, useRef, createRef, useContext } from "react";
 import {
   GoogleMap,
   Marker,
@@ -16,14 +16,38 @@ import { FormControlLabel } from "@mui/material";
 import { Checkbox } from "@mui/material";
 import { FormGroup } from "@mui/material";
 import { InputAdornment } from "@mui/material";
+import { IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { Dialog } from "@mui/material";
+import { DialogTitle } from "@mui/material";
+import { DialogContent } from "@mui/material";
+import { DialogActions } from "@mui/material";
+import { Typography } from "@mui/material";
+import { UserContext } from "../App";
+
+
+
 
 function Map(props) {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    // googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    googleMapsApiKey: "AIzaSyBZ1a96JQbH-jmgz79ItO2cGlIxv2luZNI",
   });
 
-  const { visible, radius, setRadius, circleCenter, setCircleCenter } = props;
+  const { 
+    visible, 
+    radius, 
+    setRadius, 
+    circleCenter, 
+    setCircleCenter, 
+    mapAction,
+    setSelectedCategories,
+    selectedCategories,
+    selectedKeywords,
+    setSelectedKeywords,
+    setMapAction
+  } = props;
   const location = useLocation();
   const navigate = useNavigate();
   const [mapInstance, setMapInstance] = useState(null);
@@ -35,16 +59,24 @@ function Map(props) {
   const getImage = () => takeScreenshot(ref.current);
   const [categories, setCategories] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedKeywords, setSelectedKeywords] = useState([]);
-
+  const [selectedMarker, setSelectedMarker] = useState(null);
   const circleRef = useRef(null);
   const [circleInstance, setCircleInstance] = useState(null);
   const [mapCenter, setMapCenter] = useState({ lat: 37.98381, lng: 23.727539 });
+  const [user, setUser] = useContext(UserContext);
 
   const handleRadiusChange = (event) => {
     setRadius(parseInt(event.target.value, 10)); // Update the radius value
   };
+  
+
+  //TO CHANGE MAYBE
+  useEffect(() => {
+    if (mapAction) {
+      handleModalOpen();
+    }
+  }, [mapAction]);
+
 
   const handleMapDrag = () => {
     console.log(mapRef.current);
@@ -94,15 +126,27 @@ function Map(props) {
     setSelectedKeywords(event.target.value);
   };
 
+
+
   const params = new URLSearchParams(location.search);
   let text = params.get("text");
   let catParam = params.get("categories");
   let keywordParam = params.get("keywords");
+  let radlat = params.get("lat")
+  let radlng = params.get("lng")
+  let radkm =   params.get("km")
+  
   useEffect(() => {
+    setSearchValue(props.searchV);
+    console.log("this is props");
+    console.log(props.searchV);
+    console.log("this is searchValue");
+    console.log(searchValue);
     if (
       (text && text !== "") ||
       (catParam && catParam != "") ||
-      (keywordParam && keywordParam != "")
+      (keywordParam && keywordParam != "") || 
+      (radlat && radlat != "" && radlng && radlng != "" && radkm && radkm != "" )
     ) {
       console.log("mpika");
       apiSearch();
@@ -120,20 +164,38 @@ function Map(props) {
       if (keywordParam && keywordParam != "") {
         selectedKey = keywordParam.split(",");
       }
+      let selectedDistance = {}
+      if((radlat && radlat != "" && radlng && radlng != "" && radkm && radkm != "" )){
+        selectedDistance = {
+            lat: Number(radlat),
+            lng: Number(radlng),
+            km: parseInt(radkm/1000),
+        }
+        console.log(selectedDistance) 
+      }
 
       const requestBody = {
         filters: {
           categories: selected,
           keywords: selectedKey,
-          distance: {},
+          distance: selectedDistance
         },
         text: text,
       };
-      const config = {
+      let config = {
         headers: {
           "Content-type": "application/json",
         },
       };
+
+      if (user) {
+        config = {
+        headers: {
+          "Content-type": "application/json",
+          Authorization : `Bearer ${user.token}`
+        },
+      };
+      }
 
       const { data } = await axios.post(
         "http://localhost:8000/api/search/pois/",
@@ -187,9 +249,8 @@ function Map(props) {
       const config = {
         headers: {
           "Content-type": "multipart/form-data",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzOTQzNjc5LCJpYXQiOjE2ODg3NTk2NzksImp0aSI6ImRlNTFhZjRjNmFiMjQzZDA4Yzg0ODViNTI2YTcxYjRiIiwidXNlcl9pZCI6MX0.e7fKrTF3K78IUaGWQ_-lMltKh9yNNt8FiJJcM4J5kL0",
-        },
+          Authorization : `Bearer ${user.token}`
+        }
       };
 
       const { data } = await axios.post(
@@ -211,8 +272,7 @@ function Map(props) {
 
   const handleModalClose = () => {
     setModalOpen(false);
-    console.log(selectedCategories);
-    console.log(selectedKeywords);
+    setMapAction(false);
   };
 
   const handleCategoryChange = (event) => {
@@ -227,6 +287,29 @@ function Map(props) {
       );
     }
   };
+
+
+  const markerModal = ({ selectedMarker, modalOpen, onClose }) => {
+    return (
+      <div>
+        <Dialog open={modalOpen} onClose={onClose}>
+          <DialogTitle>Selected Marker</DialogTitle>
+          <DialogContent>
+            <Typography>
+              Latitude: {selectedMarker.lat}
+            </Typography>
+            <Typography>
+              Longitude: {selectedMarker.lng}
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={onClose}>Close</Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+    );
+  };
+
 
   return isLoaded ? (
     <div>
@@ -252,54 +335,64 @@ function Map(props) {
           Filters
         </Button>
         <Modal
-          open={modalOpen}
-          onClose={handleModalClose}
-          aria-labelledby="modal-title"
-          aria-describedby="modal-description"
-          sx={{
-            display: "flex",
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "white",
-            width: "35%",
-            height: "50%",
-          }}
-        >
-          <div>
-            <FormGroup>
-              {categories.map((category) => (
-                <FormControlLabel
-                  key={category.id}
-                  control={
-                    <Checkbox
-                      checked={selectedCategories.includes(category.name)}
-                      onChange={handleCategoryChange}
-                      name={category.name}
+                    open={modalOpen}
+                    onClose={handleModalClose}
+                    aria-labelledby="modal-title"
+                    aria-describedby="modal-description"
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                <div
+                    style={{
+                    backgroundColor: '#f2f2f2',
+                    width: '35%',
+                    height: '50%',
+                    borderRadius: '8px',
+                    padding: '20px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    }}
+                >
+                <IconButton
+                style={{ alignSelf: 'flex-end' }}
+                onClick={handleModalClose}
+                >
+                <CloseIcon />
+                </IconButton>
+                <h3 style={{ marginTop: -10, marginBottom: '20px' }}>Choose Filters</h3>
+                <FormGroup>
+                    {categories.map((category) => (
+                    <FormControlLabel
+                        key={category.id}
+                        control={
+                        <Checkbox
+                            checked={selectedCategories.includes(category.name)}
+                            onChange={handleCategoryChange}
+                            name={category.name}
+                        />
+                        }
+                    label={category.name}
                     />
-                  }
-                  label={category.name}
-                />
-              ))}
-            </FormGroup>
-            <TextField
-              type="text"
-              label="Keywords (separated by commas)"
-              variant="outlined"
-              style={{ marginTop: "10px" }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">Keywords</InputAdornment>
-                ),
-              }}
-              value={selectedKeywords}
-              onChange={handleKeywordsChange}
-            />
-          </div>
-        </Modal>
+                    ))}
+                </FormGroup>
+                    <TextField
+                    type="text"
+                    label="Keywords (separated by commas)"
+                    variant="outlined"
+                    style={{ marginTop: '10px' }}
+                    InputProps={{
+                        startAdornment: (
+                        <InputAdornment position="start">Keywords</InputAdornment>
+                        ),
+                    }}
+                    value={selectedKeywords}
+                    onChange={handleKeywordsChange}
+                    />
+                </div>
+                </Modal>
         <Button variant="contained" color="primary" onClick={handleSearch}>
           Search
         </Button>
@@ -323,7 +416,7 @@ function Map(props) {
           }}
         >
           {points.map((point, index) => (
-            <MarkerF key={index} position={point} />
+            <MarkerF key={index} position={point} title={"wqefwqefqwedas231fqwefqwe"} label={"wfwqwfeqqfwefqwe"} />
           ))}
           {visible === true && (
             <Circle
@@ -348,8 +441,15 @@ function Map(props) {
             />
           )}
         </GoogleMap>
+        {modalOpen && (
+        <markerModal
+          selectedMarker={selectedMarker}
+          modalOpen={modalOpen}
+          onClose={handleModalClose}
+        />
+        
+      )}
       </div>
-      {/* <img src={image} alt="screenshot" /> */}
     </div>
   ) : null;
 }

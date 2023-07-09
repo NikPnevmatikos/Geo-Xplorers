@@ -7,15 +7,33 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import Button from "react-bootstrap/Button";
-import { Router, Routes, Route, useLocation } from "react-router-dom";
+import { Router, Routes, Route, useLocation,useNavigate } from "react-router-dom";
 import LoginScreen from "../Screens/LoginScreen.js";
 import { UserContext } from "../App.js";
 
 function Header(props) {
-  const { visible, setVisible, radius, circleCenter } = props;
+  const { 
+    visible, 
+    setVisible, 
+    radius, 
+    circleCenter, 
+    setMapAction,
+    selectedCategories,
+    selectedKeywords 
+  } = props;
   const [searchTerm, setSearchTerm] = useState("");
   const [user, SetUser] = useContext(UserContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleButtonClick = () => {
+    setMapAction(true);
+  };
+
+  const handleSearchClick = () => {
+    props.setSearchV(searchTerm);
+  };
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -23,12 +41,28 @@ function Header(props) {
 
   const handleInputChange = (event) => {
     setSearchTerm(event.target.value);
+    //props.setSearchV(event.target.value);
   };
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
     console.log(radius, circleCenter, " lala");
-    setSearchTerm(searchTerm);
+    // setSearchTerm(searchTerm);
+    // props.setSearchV(searchTerm);
+    // &categories=${cat}&keywords=${keywords}
+    const cat = selectedCategories.toString();
+    const keywords = selectedKeywords.toString();
+    console.log(selectedCategories, selectedKeywords , " search ")
+    let lat = ''
+    let lng = ''
+    let km = ''
+    if(visible){
+      lat = circleCenter.lat
+      lng = circleCenter.lng
+      km = radius
+    }
+    navigate(`/?text=${searchTerm}&categories=${cat}&keywords=${keywords}&lat=${lat}&lng=${lng}&km=${km}`);
+    
   };
 
   const logout = () => {
@@ -66,11 +100,22 @@ function Header(props) {
             <button
               className="search-button"
               type="submit"
-              //onClick={() => search()}
+              //onClick={handleSearchClick}
             >
               Search
             </button>
           </form>
+          <ul className="navbar-nav">
+            <li className="nav-item">
+              <button
+                className="filters-button"
+                type="button"
+                onClick= {handleButtonClick}
+              >
+                Filters
+              </button>
+            </li>
+          </ul>
           <ul className="navbar-nav">
             <li className="nav-item">
               <button
