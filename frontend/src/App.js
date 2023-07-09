@@ -6,7 +6,7 @@ import HomeScreen from './Screens/HomeScreen';
 import LoginScreen from './Screens/LoginScreen';
 import RegisterScreen from './Screens/RegisterScreen';
 import Header from './Components/Header';
-import AdminsPage from './Screens/AdminsPage';
+//import AdminsPage from './Screens/AdminsPage';
 
 //create a context, with createContext api
 export const UserContext = createContext();
