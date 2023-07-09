@@ -127,14 +127,14 @@ class Search(models.Model):
         timestamp, saves the changes, and returns the combined list of locations.
         :return: a list of locations.
         """
-        locations=[location for location in self.cache_locations.all()]       
-
-        new_locations=self.__runOptimizedQuery(self.timestamp)    
-        self.timestamp=timezone.localtime()
-        for new_location in new_locations:
-            self.cache_locations.add(new_location)
-            locations.append(new_location)
-            
+        #locations=[location for location in self.cache_locations.all()]       
+        #new_locations=self.__runOptimizedQuery(None)    
+        #self.timestamp=timezone.localtime()
+        #for new_location in new_locations:
+        #    self.cache_locations.add(new_location)
+        #    locations.append(new_location)
+        locations=self.__runOptimizedQuery(None);    
+        
         self.newPois = 0
         self.save()
         
