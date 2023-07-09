@@ -46,13 +46,8 @@ function Header(props) {
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    console.log(radius, circleCenter, " lala");
-    // setSearchTerm(searchTerm);
-    // props.setSearchV(searchTerm);
-    // &categories=${cat}&keywords=${keywords}
     const cat = selectedCategories.toString();
     const keywords = selectedKeywords.toString();
-    console.log(selectedCategories, selectedKeywords , " search ")
     let lat = ''
     let lng = ''
     let km = ''
