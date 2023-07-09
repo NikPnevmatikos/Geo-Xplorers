@@ -6,6 +6,8 @@ import axios from 'axios';
 import Modal from 'react-bootstrap/Modal';
 import "../Styles/Admin.css";
 
+import { MdArrowBack } from 'react-icons/md';
+
 function AdminsPage() {
 
     const [pois, setPois] = useState([]);
@@ -140,10 +142,12 @@ function AdminsPage() {
         return <div></div>
     }
 
+    // const handleBack = () => {
+    //     navigate(-1);
+    // }
 
     return (
         <div>
-
             {/* modal for uploading categories */}
 
             <Modal show={show_ctg} onHide={handleClose_ctg}>
@@ -194,6 +198,10 @@ function AdminsPage() {
 
             
             <div className="admin-container">
+                
+                {/* <button className="back-button" onClick={handleBack}>
+                    <MdArrowBack /> Back
+                </button> */}
                 <div className="admin-container-head">
                     <h2 className="admin-title">
                         My Admin's Page

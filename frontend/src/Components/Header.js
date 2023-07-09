@@ -1,24 +1,61 @@
-import React, { useState, useEffect, useContext  } from 'react'
+import React, { useState, useEffect, useContext } from "react";
 import "../App.js";
 import "../Styles/Header.css";
-import { LinkContainer } from 'react-router-bootstrap'
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
-import Button from 'react-bootstrap/Button';
-import { Router, Routes, Route, useLocation } from 'react-router-dom';
-import LoginScreen from '../Screens/LoginScreen.js';
-import { UserContext } from '../App.js';
-import { useNavigate } from 'react-router-dom';
+import { LinkContainer } from "react-router-bootstrap";
+import Container from "react-bootstrap/Container";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+import NavDropdown from "react-bootstrap/NavDropdown";
+import Button from "react-bootstrap/Button";
+import {
+  Router,
+  Routes,
+  Route,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+import LoginScreen from "../Screens/LoginScreen.js";
+import { UserContext } from "../App.js";
+import {
+  MdManageAccounts,
+  MdFilterAlt,
+  MdOutlineWifiTethering,
+  MdSearch,
+  MdAccountCircle,
+  MdLogin,
+  MdPersonAdd,
+  MdOutlineSaveAlt,
+  MdLogout,
+} from "react-icons/md";
 import NotBell from "../Components/NotBell.js";
 import "../Styles/Not.css";
 
+function Header(props) {
+  const {
+    visible,
+    setVisible,
+    radius,
+    circleCenter,
+    setMapAction,
+    selectedCategories,
+    selectedKeywords,
+  } = props;
 
-function Header() {
-  const [searchTerm, setSearchTerm, onSearch] = useState('');
+  console.log(props);
+  const [searchTerm, setSearchTerm] = useState("");
+
   const [user, SetUser] = useContext(UserContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleButtonClick = () => {
+    setMapAction(true);
+  };
+
+  const handleSearchClick = () => {
+    props.setSearchV(searchTerm);
+  };
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -26,11 +63,24 @@ function Header() {
 
   const handleInputChange = (event) => {
     setSearchTerm(event.target.value);
+    //props.setSearchV(event.target.value);
   };
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    onSearch(searchTerm);
+    const cat = selectedCategories.toString();
+    const keywords = selectedKeywords.toString();
+    let lat = "";
+    let lng = "";
+    let km = "";
+    if (visible) {
+      lat = circleCenter.lat;
+      lng = circleCenter.lng;
+      km = radius;
+    }
+    navigate(
+      `/?text=${searchTerm}&categories=${cat}&keywords=${keywords}&lat=${lat}&lng=${lng}&km=${km}`
+    );
   };
 
   // const navigate = useNavigate();
@@ -39,19 +89,35 @@ function Header() {
     SetUser(undefined);
     // put user in local storage
     localStorage.removeItem("User");
-    // navigate('/'); 
-  }
+  };
 
   const location = useLocation();
 
   return (
     <div>
-      <nav className={location.pathname === '/' ? 'navbar-home': 'navbar-other'}>
+      <nav
+        className={location.pathname === "/" ? "navbar-home" : "navbar-other"}
+      >
         <div className="nav-left">
-          <LinkContainer style={{width:"12%", height:"12%", cursor : 'pointer'}} to="/">
-            <img style={{width:"20px", height:"20px"}} src="/geoxplorers_logo.png" alt="logo"/>            
+          <LinkContainer
+            style={{ width: "80px", height: "80px", cursor: "pointer" }}
+            to="/"
+          >
+            <img
+              style={{ width: "20px", height: "20px" }}
+              src="/geoxplorers_logo.png"
+              alt="logo"
+            />
           </LinkContainer>
-          <form className= "search-bar" onSubmit={handleFormSubmit}>
+          {/* <div style={{zIndex: location.pathname !== '/' && 0}}> */}
+          <form
+            className="search-bar"
+            style={{
+              zIndex: location.pathname !== "/" && -999,
+              opacity: location.pathname !== "/" && 0,
+            }}
+            onSubmit={handleFormSubmit}
+          >
             <input
               className="search-input"
               type="text"
@@ -59,68 +125,104 @@ function Header() {
               value={searchTerm}
               onChange={handleInputChange}
             />
-            <button className="search-button" type="submit">Search</button>
+            <button className="search-button" type="submit">
+              <MdSearch /> Search
+            </button>
           </form>
-          <ul className="navbar-nav">
+          <ul
+            className="navbar-nav"
+            style={{
+              zIndex: location.pathname !== "/" && -999,
+              opacity: location.pathname !== "/" && 0,
+            }}
+          >
             <li className="nav-item">
-              <a className="nav-link" href="">
+              {/* <a className="nav-link" href="">
+                 <MdOutlineWifiTethering /> Radius
+               </a> */}
+              <button
+                className="search-button"
+                type="button"
+                onClick={() => setVisible(!visible)}
+              >
                 Radius
+              </button>
+            </li>
+            <li className="nav-item" style={{ width: "90px" }}>
+              {/* <a className="nav-link" href="">
+                <MdFilterAlt /> Filter
+              </a> */}
+              <button
+                className="filters-button"
+                type="button"
+                onClick={handleButtonClick}
+              >
+                Filters
+              </button>
+            </li>
+            <li className="nav-item" style={{ width: "130px" }}>
+              <a className="nav-link" href="">
+                <MdOutlineSaveAlt /> Save Search
               </a>
             </li>
-
           </ul>
+          {/* </div> */}
         </div>
-        
 
-          {/* the items are going to change if the user is logged in or not */}
-          
-          {user ?
-            <ul className="navbar-nav">
-              {user.is_staff &&
-                <li className="nav-item" style={{width: "130px"}}>
-                  <a className="nav-link" href="/admin_page/">
-                    Admin's Page
-                  </a>
-                </li>
-              }
-              <div className="magicbell-container">
-              <NotBell/>
-              </div>
-              <li className={`nav-item dropdown ${isDropdownOpen ? 'show' : ''}`}>
-                <a
-                  className="nav-link dropdown-toggle"
-                  href="#"
-                  role="button"
-                  onClick={toggleDropdown}
-                >
-                  Account
+        {/* the items are going to change if the user is logged in or not */}
+
+        {user ? (
+          <ul className="navbar-nav">
+            <div className="magicbell-container">
+              <NotBell />
+            </div>
+            {user.is_staff && (
+              <li className="nav-item" style={{ width: "135px" }}>
+                <a className="nav-link" href="/admin_page/">
+                  <MdManageAccounts /> Admin's Page
                 </a>
-                <div className={`dropdown-menu ${isDropdownOpen ? 'show' : ''}`}>
+              </li>
+            )}
+            <li
+              className={`nav-item dropdown ${isDropdownOpen ? "show" : ""}`}
+              style={{ width: "110px" }}
+            >
+              <a
+                className="nav-link dropdown-toggle"
+                href="#"
+                role="button"
+                onClick={toggleDropdown}
+              >
+                Account
+              </a>
+              <div className={`dropdown-menu ${isDropdownOpen ? "show" : ""}`}>
                 <a className="dropdown-item" href="/save_searches/">
-                    Saved Searches
-                  </a>
-                  <a className="dropdown-item">
-                    Profile
-                  </a>
-                  <a className="dropdown-item" onClick={logout}>
-                    Logout
-                  </a>
-                </div>
-              </li>
-            </ul>
-          :
-            <ul className="navbar-nav">
-              <li className="nav-item">
-                <a className="nav-link" href="/login/">Sign In</a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="/register/">Register</a>
-              </li>
-            </ul>
-          }
+                  Saved Searches
+                </a>
+                <a className="dropdown-item">
+                  <MdAccountCircle /> Profile
+                </a>
+                <a className="dropdown-item" onClick={logout}></a>
+              </div>
+            </li>
+          </ul>
+        ) : (
+          <ul className="navbar-nav">
+            <li className="nav-item">
+              <a className="nav-link" href="/login/">
+                <MdLogin /> Sign In
+              </a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link" href="/register/">
+                <MdPersonAdd /> Register
+              </a>
+            </li>
+          </ul>
+        )}
       </nav>
     </div>
-  )
+  );
 }
 
-export default Header
+export default Header;
