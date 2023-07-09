@@ -10,6 +10,9 @@ import Button from 'react-bootstrap/Button';
 import { Router, Routes, Route, useLocation } from 'react-router-dom';
 import LoginScreen from '../Screens/LoginScreen.js';
 import { UserContext } from '../App.js';
+import { useNavigate } from 'react-router-dom';
+import NotBell from "../Components/NotBell.js";
+import "../Styles/Not.css";
 
 
 function Header() {
@@ -30,10 +33,13 @@ function Header() {
     onSearch(searchTerm);
   };
 
+  // const navigate = useNavigate();
+
   const logout = () => {
     SetUser(undefined);
     // put user in local storage
     localStorage.removeItem("User");
+    // navigate('/'); 
   }
 
   const location = useLocation();
@@ -77,7 +83,9 @@ function Header() {
                   </a>
                 </li>
               }
-              
+              <div className="magicbell-container">
+              <NotBell/>
+              </div>
               <li className={`nav-item dropdown ${isDropdownOpen ? 'show' : ''}`}>
                 <a
                   className="nav-link dropdown-toggle"
@@ -88,6 +96,9 @@ function Header() {
                   Account
                 </a>
                 <div className={`dropdown-menu ${isDropdownOpen ? 'show' : ''}`}>
+                <a className="dropdown-item" href="/save_searches/">
+                    Saved Searches
+                  </a>
                   <a className="dropdown-item">
                     Profile
                   </a>

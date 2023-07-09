@@ -20,6 +20,7 @@ const CardSkeleton = ({ cards }) => {
                                     <Skeleton style={{width:'400px'}}/>
                                     <Skeleton />
                                     <Skeleton />
+                                    <Skeleton />
                                 </Typography>
                             </CardContent>
 

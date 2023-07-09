@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { UserContext } from '../App';
 import axios from 'axios';
 import { Card, CardActionArea, Grid, CardMedia, Typography, CardContent, CardActions, Button, CardHeader, IconButton, Modal, Box, ChildModal } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -42,10 +43,10 @@ export default function Save_Searches() {
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: 350,
+        width: 400,
         bgcolor: 'background.paper',
-        p: 4,
-        borderRadius:'9px'
+        p: 2,
+        borderRadius: '9px'
     };
 
 
@@ -73,7 +74,7 @@ export default function Save_Searches() {
                     draggable: true,
                     progress: undefined,
                     theme: "light",
-                    color:"red"
+                    color: "red"
                 });
             })
             .catch((error) => {
@@ -88,16 +89,28 @@ export default function Save_Searches() {
         navigate(`/path-to-item/${itemId}`);
     };
 
+    // const [pois, setPois] = useState([]);
+    const [user, setUser] = useContext(UserContext);
+
+
+    // const navigate_logout = useNavigate();
+
     useEffect(() => {
         const fetchData = async () => {
+            setIsLoading(true);
+            // await new Promise((resolve) => setTimeout(resolve, 5000));
             try {
+                // if (user === null) {
+                //     navigate("/"); // Navigate to the home screen if the user is null
+                //     return; // Exit the function
+                // }
                 const config = {
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzODU3ODE2LCJpYXQiOjE2ODg2NzM4MTYsImp0aSI6ImE3MGQ3OGMzNmYzOTQyMTNiNzYxNGUxZTE0NzdkNDFmIiwidXNlcl9pZCI6Mn0.QJpT6Vtp9d_B6G7f4chz34k_dJYWk-ILc9fvLQf5IjQ',
+                        // Authorization: `Bearer ${user.token}`,
+                        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzODU3ODE2LCJpYXQiOjE2ODg2NzM4MTYsImp0aSI6ImE3MGQ3OGMzNmYzOTQyMTNiNzYxNGUxZTE0NzdkNDFmIiwidXNlcl9pZCI6Mn0.QJpT6Vtp9d_B6G7f4chz34k_dJYWk-ILc9fvLQf5IjQ`
                     },
                 };
-
                 const response = await axios.get('http://localhost:8000/api/searches/?type=saved', config);
 
                 const responseData = response.data;
@@ -112,156 +125,172 @@ export default function Save_Searches() {
         };
 
         fetchData();
-    }, [deleted]);
+    }, [deleted, user]);
 
+    
     const totalItems = data.length;
     return (
         <div>
-            <h2>Save Searches</h2><br />
-
-            <Grid container spacing={4} direction="column" justifyContent="center" alignItems="center">
-
-                {/* {data.length === 0 ? (
-                    <h5>No searches found.</h5>
+            <br /> <h3 style={{ marginTop: '90px', textAlign: 'center' }}>Saved Searches</h3> <br />
+            {/* {data.length === 0 ? (
+            <div>
+                    <h5 style={{marginTop:'70px',textAlign:'center'}}>No searches yet!</h5> <br />
+                    <div className="img_no_searches_container">
+                        <img src="/no_searches.jpg" className="img_no_searches" />
+                    </div>
+            </div>
                 ) : ( */}
+              {/* {isLoading && <CardSkeleton cards={totalItems} />} */}
+      {!isLoading && data.length === 0 && (
+        <div>
+          <h5 style={{ marginTop: "70px", textAlign: "center" }}>
+            No searches yet!
+          </h5>
+          <br />
+          <div className="img_no_searches_container">
+            <img src="/no_searches.jpg" className="img_no_searches" />
+          </div>
+        </div>
+      )}
+       {/* {!isLoading && data.length > 0 && ( */}
+
+                <Grid container spacing={4} direction="column" justifyContent="center" alignItems="center">
                 {isLoading ? (
                     // Render the skeleton card when isLoading is true
+                    
 
                     <CardSkeleton cards={totalItems} />
 
                 ) : (
-                    data.map((item) => (
-                        <Grid item xs={12} key={item._id}>
-                            <Card sx={{ minWidth: 800, maxWidth: 800, maxHeight: 250, minHeight: 250, backgroundColor: 'white', boxShadow: '5px 10px 10px rgba(2, 128, 144, 0.2)', borderRadius: '20px' }} className="card">
-                                <CardHeader
-                                    sx={{ height: '7px', padding: '8px' }}
-                                    onClick={() => handleDeleteClick(item._id)}
-                                    action={
-                                        <IconButton aria-label="settings"
-                                            sx={{
-                                                position: 'relative',
-                                                '&:hover': {
-                                                    background: 'rgba(255, 0, 0, 0.1)',
+                   
+                        data.map((item) => (  
+                    <Grid item xs={12} key={item._id}>
+                        <Card sx={{ minWidth: 800, maxWidth: 800, maxHeight: 250, minHeight: 250, backgroundColor: 'white', boxShadow: '5px 10px 10px rgba(2, 128, 144, 0.2)', borderRadius: '20px' }} className="card">
+                            <CardHeader
+                                sx={{ height: '7px', padding: '8px' }}
+                                onClick={() => handleDeleteClick(item._id)}
+                                action={
+                                    <IconButton aria-label="settings"
+                                        sx={{
+                                            position: 'relative',
+                                            '&:hover': {
+                                                background: 'rgba(255, 0, 0, 0.1)',
 
-                                                },
+                                            },
 
-                                            }}>
-                                            <FontAwesomeIcon icon={faTrash} style={{ color: 'red', width: '16px', padding: '0 8px', }} />
-                                        </IconButton>
-                                    }
-                                />
+                                        }}>
+                                        <FontAwesomeIcon icon={faTrash} style={{ color: 'red', width: '16px', padding: '0 8px', }} />
+                                    </IconButton>
+                                }
+                            />
 
-                                <Modal open={isOpen} onClose={() => setIsOpen(false)}>
-                                    <Box sx={style}>
+                            <Modal open={isOpen} onClose={() => setIsOpen(false)}>
+                                <Box sx={style}>
 
-                                        <FontAwesomeIcon icon={faTimes} size="lg" onClick={() => setIsOpen(false)}
-                                            className="close-icon " /> <br /><br />
+                                    <FontAwesomeIcon icon={faTimes} size="lg" onClick={() => setIsOpen(false)}
+                                        className="close-icon " /> <br /><br />
 
-                                        <h3 id="parent-modal-title" style={{ textAlign: 'center' }}>Are you sure you want to delete that?</h3>
-                                        <br />
-                                        <button className="admin-button" onClick={() => handleDelete(item._id)}>
-                                            Yes Delete
-                                        </button>
-                                        <button className="admin-button-cancel" onClick={() => setIsOpen(false)}>
-                                            Cancel
-                                        </button>
-                                    </Box>
-                                </Modal>
+                                    <h5 id="parent-modal-title" style={{ textAlign: 'center' }}>Are you sure you want to delete that?</h5>
+                                    <br />
+                                    <button className="admin-button" onClick={() => handleDelete(item._id)}>
+                                        Yes Delete
+                                    </button>
+                                    <button className="admin-button-cancel" onClick={() => setIsOpen(false)}>
+                                        Cancel
+                                    </button>
+                                </Box>
+                            </Modal>
 
-                                <div className="card_action_area_container">
-                                    <CardActionArea style={{ width: '300px', marginRight: '1rem'}} onClick={() => navigateToItem(item._id)}>
-                                        <CardMedia
-                                            key={item._id}
-                                            component="img"
-                                            className="card_img"
-                                            sx={{ width: 300, height: 170 }}
-                                            image={`http://localhost:8000${item.image}`}
-                                            alt="Image Alt Text"
-                                        />
-                                    </CardActionArea>
-                                    <div className="text_button_container">
-                                        <CardContent className="text_container">
-                                            <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'pre-line', fontSize: '16px' }}>
-                                                {(() => {
-                                                    const displayString = [
-                                                        item.text !== null ? `${item.text}` : "",
-                                                        item.categories !== null && item.categories.length > 0
-                                                            ? `Categories:${item.categories.map((category) => category.name).join(",")}`
-                                                            : "",
-                                                        item.keywords !== null && item.keywords.length > 0
-                                                            ? `Keywords:${item.keywords.map((keyword) => keyword.keyword).join(",")}`
-                                                            : "",
-                                                        item.latitude !== null ? `Latitude: ${item.latitude}` : "",
-                                                        item.longitude !== null ? `Longitude: ${item.longitude}` : "",
-                                                        item.kilometers !== null ? `Kilometers: ${item.kilometers}` : "",
-                                                    ].filter(Boolean).join("\n");
+                            <div className="card_action_area_container">
+                                <CardActionArea style={{ width: '300px', marginRight: '1rem' }} onClick={() => navigateToItem(item._id)}>
+                                    <CardMedia
+                                        key={item._id}
+                                        component="img"
+                                        className="card_img"
+                                        sx={{ width: 300, height: 170 }}
+                                        image={`http://localhost:8000${item.image}`}
+                                        alt="Image Alt Text"
+                                    />
+                                </CardActionArea>
+                                <div className="text_button_container">
+                                    <CardContent className="text_container">
+                                        <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'pre-line', fontSize: '16px', color: 'black' }}>
+                                            {(() => {
+                                                const displayString = [
+                                                    item.text !== null ? `${item.text}` : "",
+                                                    item.categories !== null && item.categories.length > 0
+                                                        ? `Categories:${item.categories.map((category) => category.name).join(",")}`
+                                                        : "",
+                                                    item.keywords !== null && item.keywords.length > 0
+                                                        ? `Keywords:${item.keywords.map((keyword) => keyword.keyword).join(",")}`
+                                                        : "",
+                                                    item.latitude !== null ? `Latitude: ${item.latitude}` : "",
+                                                    item.longitude !== null ? `Longitude: ${item.longitude}` : "",
+                                                    item.kilometers !== null ? `Kilometers: ${item.kilometers}` : "",
+                                                ].filter(Boolean).join("\n");
 
 
-                                                    const shouldShowMoreButton = displayString.length > MAX_TEXT_SIZE;
-                                                    const isExpanded = expandedItemIds.includes(item._id);
+                                                const shouldShowMoreButton = displayString.length > MAX_TEXT_SIZE;
+                                                const isExpanded = expandedItemIds.includes(item._id);
 
-                                                    if (displayString) {
-                                                        return (
-                                                            <>
-                                                                {!isExpanded && (
-                                                                    <>
-                                                                        {shouldShowMoreButton ? (
-                                                                            <>
-                                                                                {displayString.substring(0, MAX_TEXT_SIZE)}...
-                                                                                <Button onClick={() => handleShowMore(item._id)} style={{ fontSize: '13px', textTransform: 'lowercase' }} className='button_showMore_showLess'>Show more </Button>
-                                                                            </>
-                                                                        ) : (
-                                                                            <>
-                                                                                {displayString}
-                                                                            </>
-                                                                        )}
-                                                                    </>
-                                                                )}
-                                                                {isExpanded && (
-                                                                    <>
-                                                                        {displayString}
-                                                                        <br />
-                                                                        <Button onClick={() => handleShowLess(item._id)} style={{ fontSize: '13px', textTransform: 'lowercase' }} className='button_showMore_showLess'>Show Less</Button>
-                                                                    </>
-                                                                )}
-                                                            </>
-                                                        );
-                                                    } else {
-                                                        return null;
-                                                    }
-                                                })()}
-                                            </Typography>
-                                        </CardContent>
+                                                if (displayString) {
+                                                    return (
+                                                        <>
+                                                            {!isExpanded && (
+                                                                <>
+                                                                    {shouldShowMoreButton ? (
+                                                                        <>
+                                                                            {displayString.substring(0, MAX_TEXT_SIZE)}...
+                                                                            <Button onClick={() => handleShowMore(item._id)} style={{ fontSize: '13px', textTransform: 'lowercase' }} className='button_showMore_showLess'>Show more </Button>
+                                                                        </>
+                                                                    ) : (
+                                                                        <>
+                                                                            {displayString}
+                                                                        </>
+                                                                    )}
+                                                                </>
+                                                            )}
+                                                            {isExpanded && (
+                                                                <>
+                                                                    {displayString}
+                                                                    <br />
+                                                                    <Button onClick={() => handleShowLess(item._id)} style={{ fontSize: '13px', textTransform: 'lowercase' }} className='button_showMore_showLess'>Show Less</Button>
+                                                                </>
+                                                            )}
+                                                        </>
+                                                    );
+                                                } else {
+                                                    return null;
+                                                }
+                                            })()}
+                                        </Typography>
+                                    </CardContent>
 
-                                        <CardActions style={{ marginTop: 'auto' }} className="fixed_button">
-                                            {item.newPois === 0 ? (
-                                                <CardActionArea onClick={() => navigateToItem(item._id)} sx={{ width: '240px' }}>
-                                                    <a className="notification">
-                                                        Points of interest
-                                                    </a>
-                                                </CardActionArea>
-                                            ) : (
-                                                <CardActionArea onClick={() => navigateToItem(item._id)} sx={{ width: '240px' }}>
-                                                    <a className="notification">
-                                                        <span>New points of interest</span>
-                                                        <span className="badge">{item.newPois}</span>
-                                                    </a>
-                                                </CardActionArea>
-                                            )}
-                                        </CardActions>
+                                    <CardActions style={{ marginTop: 'auto' }} className="fixed_button">
+                                        {item.newPois === 0 ? (
+                                            <CardActionArea onClick={() => navigateToItem(item._id)} sx={{ width: '270px' }}>
+                                                <a className="notification">
+                                                    Points of interest
+                                                </a>
+                                            </CardActionArea>
+                                        ) : (
+                                            <CardActionArea onClick={() => navigateToItem(item._id)} sx={{ width: '270px' }}>
+                                                <a className="notification">
+                                                    <span>New points of interest</span>
+                                                    <span className="badge">{item.newPois}</span>
+                                                </a>
+                                            </CardActionArea>
+                                        )}
+                                    </CardActions> 
 
-                                    </div>
                                 </div>
-                            </Card>
-                        </Grid>
-
-                    ))
-                )}
-
-                {/* )} */}
-
-
-            </Grid>
+                            </div>
+                        </Card>
+                        
+                    </Grid>
+                        ))
+                )}      
+                </Grid>                        
             <ToastContainer />
         </div>
     );

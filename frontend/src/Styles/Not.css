@@ -1,0 +1,8 @@
+.magicbell-container{
+    margin-top:5px;
+}
+
+.notification-inbox-container .footer {
+    pointer-events: none;
+    cursor: default;
+  }

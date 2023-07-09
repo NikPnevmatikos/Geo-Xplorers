@@ -8,6 +8,7 @@ import LoginScreen from './Screens/LoginScreen';
 import RegisterScreen from './Screens/RegisterScreen';
 import Header from './Components/Header';
 import AdminsPage from './Screens/AdminsPage';
+import NotBell from './Components/NotBell'
 
 //create a context, with createContext api
 export const UserContext = createContext();
@@ -42,6 +43,8 @@ function App() {
                         <Route path="/login/" element={<LoginScreen/>} /> 
                         <Route path="/register/" element={<RegisterScreen/>} />
                         <Route path="/admin_page/" element={<AdminsPage/>} />
+                        {/* <Route path="/not/" element={<NotBell/>} /> */}
+                        <Route path="/save_searches/" element={<SaveSearches/>} />
                     </Routes>
                 </Router>                
             </UserContext.Provider> 
