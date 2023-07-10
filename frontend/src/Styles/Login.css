@@ -1,0 +1,137 @@
+body {
+    font-family: 'Asap', sans-serif;
+}
+
+.login {
+    overflow: hidden;
+    background-color: white;
+    padding: 40px 30px 30px 30px;
+    border-radius: 20px;
+    position: absolute;
+    /* margin-top: 350px; */
+    top: 50%;
+    left: 50%;
+    width: 70%;
+    height: fit-content;
+    transform: translate(-50%, -50%);
+    transition: transform 300ms, box-shadow 300ms;
+    display: flex;
+    box-shadow: 5px 10px 10px rgba(2, 128, 144, 0.2);
+    flex-direction: column;
+    align-items: center;
+}
+
+.login::before,
+.login::after {
+    content: '';
+    position: absolute;
+    width: 800px;
+    height: 750px;
+    /* width: 80%;
+    height: 180%; */
+    border-top-left-radius: 50%;
+    border-top-right-radius: 50%;
+    border-bottom-left-radius: 50%;
+    border-bottom-right-radius: 40%;
+    z-index: -1;
+}
+
+.login::before {
+    left: 20%;
+    bottom: -13cm;
+    background-color: rgba(69, 105, 144, 0.15);
+    animation: wawes 6s infinite linear;
+}
+
+.login::after {
+    left: 25%;
+    bottom: -12cm;
+    background-color: rgba(2, 128, 144, 0.2);
+    animation: wawes 7s infinite;
+}
+
+.login-content {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    align-items: center;
+}
+
+.login-content > label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 4px;
+    text-align: start;
+    align-self: flex-start;
+}
+
+.login-content > input {
+    font-family: 'Asap', sans-serif;
+    display: block;
+    border-radius: 5px;
+    font-size: 16px;
+    background: rgb(249, 249, 249);
+    width: 100%;
+    border: 0;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.login-content > button {
+    border-radius: 5px;
+    border-color: transparent;
+    width: 35%;
+    display: flex;
+    justify-content: center;
+    margin: 1%;
+    background-color: rgba(2, 128, 144, 0.4);
+}
+
+.login-content > button:hover {
+    background-color: rgba(2, 128, 144, 0.6);
+}
+
+@keyframes wawes {
+    from {
+        transform: rotate(0);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.login-content > p {
+    display: block;
+    align-self: flex-end;
+    margin: 10px;
+}
+
+.login-content > p > em > a {
+    color: rgba(2, 128, 144, 1);
+}
+
+.back-button {
+    position: absolute;
+    margin-top: 110px;
+    margin-left: 20px;
+    top: 10px;
+    left: 10px;
+
+    border-radius: 7px;
+    height: 40px;
+    /* width: 150px; */
+    padding-left: 13px;
+    padding-right: 13px;
+    
+    justify-content: center;
+    background-color: white;
+    box-shadow: 3px 3px 3px rgba(129, 129, 129, 0.3);
+    border-style: hidden ;
+
+    font-size: 17px;
+    font-weight: normal;
+    line-height: 2;
+    /* width: max-content; */
+    /* font-family: Roboto; */
+    /* color: black;   */
+}

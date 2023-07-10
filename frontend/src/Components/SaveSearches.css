@@ -1,0 +1,155 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: 'Asap', sans-serif;
+}
+
+h2 {
+  text-align: center;
+}
+
+.card_img {
+  border-radius: 10px;
+  min-width: 300px;
+  min-height: 180px;
+}
+
+
+.card_action_area_container {
+  display: flex;
+  padding: 17px;
+}
+
+
+
+.text_button_container {
+  display: flex;
+  flex-direction: column;
+}
+
+.text_container {
+  margin-top: -20px;
+}
+
+
+.fixed_button {
+  width: 300px;
+}
+
+.notification {
+  font-family: 'Asap', sans-serif;
+  color: black;
+  font-size: 16px;
+  text-decoration: none;
+  padding: 10px 20px;
+  width: 270px;
+  position: relative;
+  display: inline-block;
+  border-radius: 5px;
+  border-color: transparent;
+  display: flex;
+  background-color: rgba(2, 128, 144, 0.4);
+  justify-content: center;
+}
+
+.notification:hover {
+  background-color: rgba(2, 128, 144, 0.4);
+}
+
+.notification .badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  padding: 5px 10px;
+  border-radius: 50%;
+  background: red;
+  color: white;
+}
+
+.Toastify__progress-bar {
+  background-color: rgba(2, 128, 144, 0.4);
+}
+
+:root {
+  --toastify-color-success: rgba(2, 128, 144, 0.4);
+
+}
+
+
+.custom-text {
+  color: rgb(166, 224, 251);
+  font-weight: bold;
+}
+
+.button_showMore_showLess {
+  font-size: 5px;
+}
+
+.card {
+
+  background-color: rgb(201, 52, 52);
+
+}
+
+
+.admin-button {
+  cursor: pointer;
+  float: right;
+  border-radius: 5px;
+  border-color: transparent;
+  width: max-content;
+  height: 30px;
+  padding-inline: 20px;
+  justify-content: center;
+  margin: 2px;
+  background-color: rgba(2, 128, 144, 0.6);
+}
+
+.admin-button:hover {
+  background-color: rgba(2, 128, 144, 0.8);
+}
+
+.admin-button-cancel {
+  cursor: pointer;
+  float: right;
+  border-radius: 5px;
+  border-color: transparent;
+  width: max-content;
+  padding-inline: 20px;
+  justify-content: center;
+  margin: 2px;
+  background-color: rgba(102, 127, 130, 0.4);
+  height: 30px;
+}
+
+.admin-button-cancel:hover {
+  background-color: rgba(102, 127, 130, 0.6);
+}
+
+.close-icon {
+  color: grey;
+  margin-left: 350px;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.close-icon:hover {
+  background-color: rgb(220, 215, 215);
+  border-radius: 10px;
+
+}
+
+.img_no_searches_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.img_no_searches {
+  width: 720px;
+  height: 410px;
+  border-radius: 9px
+}
