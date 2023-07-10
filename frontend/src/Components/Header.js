@@ -27,10 +27,13 @@ import {
   MdOutlineSaveAlt,
   MdLogout,
   MdSave,
-  MdPerson
+  MdPerson,
 } from "react-icons/md";
 import NotBell from "../Components/NotBell.js";
 import "../Styles/Not.css";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Header(props) {
   const {
@@ -41,6 +44,7 @@ function Header(props) {
     setMapAction,
     selectedCategories,
     selectedKeywords,
+    savedSearchId,
   } = props;
 
   console.log(props);
@@ -86,6 +90,26 @@ function Header(props) {
     );
   };
 
+  const handleSaveSearch = async () => {
+    if (savedSearchId !== -1) {
+      try {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        };
+        const { data } = await axios.post(
+          `http://localhost:8000/api/searches/?pk=${savedSearchId}`,
+          {},
+          config
+        );
+        toast("Search saved successfully!", { type: "success" });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
 
   /*The logout function clears the user data and removes it from the local storage.*/
   const logout = () => {
@@ -94,9 +118,8 @@ function Header(props) {
   };
 
   return (
-    <div> 
-
-      {/* component for the left side of the navigation bar */}
+    <div>
+      <ToastContainer />
       <nav
         className={location.pathname === "/" ? "navbar-home" : "navbar-other"}
       >
@@ -143,26 +166,30 @@ function Header(props) {
                 type="button"
                 onClick={() => setVisible(!visible)}
               >
-                <MdOutlineWifiTethering/> Radius
+                <MdOutlineWifiTethering /> Radius
               </a>
             </li>
             <li className="nav-item" style={{ width: "90px" }}>
-              <a
-                className="nav-link"
-                type="button"
-                onClick={handleButtonClick}
-              >
-                <MdFilterAlt/> Filter
+              <a className="nav-link" type="button" onClick={handleButtonClick}>
+                <MdFilterAlt /> Filter
               </a>
             </li>
-            <li className="nav-item" style={{ width: "130px" }}>
-              <a className="nav-link" href="">
+            {user ? (
+              <li className="nav-item" style={{ width: "130px" }}>
+                {/* <a className="nav-link" href="">
                 <MdOutlineSaveAlt /> Save Search
-              </a>
-            </li>
+              </a> */}
+                <button
+                  className="search-button"
+                  type="button"
+                  onClick={handleSaveSearch}
+                >
+                  <MdOutlineSaveAlt /> Save Search
+                </button>
+              </li>
+            ) : null}
           </ul>
         </div>
-
 
         {/* the items are going to change depending on the user  (admin, logged in, etc.)*/}
 
@@ -173,7 +200,7 @@ function Header(props) {
                 <NotBell />
               </div>
             </li>
-            
+
             {user.is_staff && (
               <li className="nav-item" style={{ width: "135px" }}>
                 <a className="nav-link" href="/admin_page/">
@@ -183,7 +210,7 @@ function Header(props) {
             )}
             <li
               className={`nav-item dropdown ${isDropdownOpen ? "show" : ""}`}
-              style={{ width: "170px"}}
+              style={{ width: "170px" }}
             >
               <a
                 className="nav-link dropdown-toggle"
@@ -191,17 +218,17 @@ function Header(props) {
                 role="button"
                 onClick={toggleDropdown}
               >
-                <MdPerson/> Account
+                <MdPerson /> Account
               </a>
               <div className={`dropdown-menu ${isDropdownOpen ? "show" : ""}`}>
                 <a className="dropdown-item" href="/save_searches/">
-                  <MdSave/> Saved Searches
+                  <MdSave /> Saved Searches
                 </a>
                 <a className="dropdown-item">
                   <MdAccountCircle /> Profile
                 </a>
                 <a className="dropdown-item" onClick={logout}>
-                  <MdLogout/> Logout
+                  <MdLogout /> Logout
                 </a>
               </div>
             </li>
