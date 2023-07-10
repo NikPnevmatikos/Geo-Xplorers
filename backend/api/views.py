@@ -351,7 +351,7 @@ def ImportLocations(request):
                 )   
                 for category in categories.all():
                     location.categories.add(category)
-
+                
                 location.save()
                 # Create Keyword objects associated with the PointOfInterest
                 for keyword in row[Positions.KEYWORDS].split(','):
@@ -413,7 +413,7 @@ def ImportLocations(request):
     except ValueError as e:
         return Response({"details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        return Response({"details": "Error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"details": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
