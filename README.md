@@ -19,8 +19,8 @@ user-friendly platform for users to explore and discover new exciting locations.
 
 [![](https://contrib.rocks/image?repo=NikPnevmatikos/Geo-Xplorers)](https://github.com/NikPnevmatikos/Geo-Xplorers/graphs/contributors)
 
-<a href="https://github.com/NikPnevmatikos/webapp/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=NikPnevmatikos/webapp" />
+<a href="https://github.com/NikPnevmatikos/Geo-Xplorers/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=NikPnevmatikos/Geo-Xplorers" />
 </a>
 
 Implemented by CodeOfDuty team:
