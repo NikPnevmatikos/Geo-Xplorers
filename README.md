@@ -24,7 +24,7 @@ Detailed documentation [README.pdf](./README.pdf)
 <div style="display: flex; flex-direction: row; align-items:center;">
   <a href="https://github.com/NikPnevmatikos">
     <img 
-      style="margin-right: 10px; border-radius: 50px;" 
+      style="margin-right: 10px; border-radius: 30px; " 
       src="https://github.com/NikPnevmatikos.png" width="60px;"
       alt="NikPnevmatikos"
     />
@@ -35,14 +35,14 @@ Detailed documentation [README.pdf](./README.pdf)
 <div style="display: flex; flex-direction: row; align-items:center;">
   <a href="https://github.com/NikPnevmatikos">
     <img 
-      style="margin-right: 10px; border-radius: 50%;" 
+      style="margin-right: 10px; border-radius: 30px;" 
       src="https://github.com/NikPnevmatikos.png" width="60px;"
       alt="NikPnevmatikos"
     />
   </a>
   <a href="https://github.com/JohnKalesis1">
     <img 
-      style="margin-right: 10px; border-radius:50%;" 
+      style="margin-right: 10px; border-radius: 30px;" 
       src="https://github.com/JohnKalesis1.png" width="60px;"
       alt="JohnKalesis"
     />
@@ -53,28 +53,28 @@ Detailed documentation [README.pdf](./README.pdf)
 <div style="display: flex; flex-direction: column; align-items:center;">
   <a href="https://github.com/NikPnevmatikos">
     <img 
-      style="margin-right: 10px; border-radius:50%;" 
+      style="margin-right: 10px; border-radius: 30px;" 
       src="https://github.com/NikPnevmatikos.png" width="60px;"
       alt="NikPnevmatikos"
     />
   </a>
   <a href="https://github.com/MaryDiam">
     <img 
-      style="margin-right: 10px; border-radius:50%;" 
+      style="margin-right: 10px; border-radius: 30px;" 
       src="https://github.com/MaryDiam.png" width="60px;"
       alt="MaryDiam"
     />
   </a>
     <a href="https://github.com/lefstefanou">
     <img 
-      style="margin-right: 10px; border-radius:50%;" 
+      style="margin-right: 10px; border-radius: 30px;" 
       src="https://github.com/lefstefanou.png" width="60px;"
       alt="LefterisStefanou"
     />
   </a>
     <a href="https://github.com/katerinamilioti">
     <img 
-      style="margin-right: 10px; border-radius:50%;" 
+      style="margin-right: 10px; border-radius: 30px;" 
       src="https://github.com/katerinamilioti.png" width="60px;"
       alt="KaterinaMilioti"
     />
