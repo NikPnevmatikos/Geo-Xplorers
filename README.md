@@ -21,16 +21,16 @@ Implemented by CodeOfDuty team:
 
 ● Project Manager
    
-  ○  [<img src="https://github.com/NikPnevmatikos.png" width="60px;"/><sub><a href="https://github.com/NikPnevmatikos">NikPnevmatikos</a></sub>](https://github.com/NikPnevmatikos)
+  ○  [<img src="https://github.com/NikPnevmatikos.png" width="60px;"/><sub><a href="https://github.com/NikPnevmatikos">     NikPnevmatikos</a></sub>](https://github.com/NikPnevmatikos)
   
 ● Backend
 
   ○ [<img src="https://github.com/NikPnevmatikos.png" width="60px;"/><br /><sub><a href="https://github.com/NikPnevmatikos">NikPnevmatikos</a></sub>](https://github.com/NikPnevmatikos) \
-  ○ [<img src="https://github.com/JohnKalesis1.png" width="60px;"/><br /><sub><a href="https://github.com/JohnKalesis1">JohnKalesis</a></sub>](https://github.com/JohnKalesis1)\
+  ○ [<img src="https://github.com/JohnKalesis1.png" width="60px;"/><br /><sub><a href="https://github.com/JohnKalesis1">JohnKalesis</a></sub>](https://github.com/JohnKalesis1)
   
 ● Frontend
 
   ○ [<img src="https://github.com/NikPnevmatikos.png" width="60px;"/><br /><sub><a href="https://github.com/NikPnevmatikos">NikPnevmatikos</a></sub>](https://github.com/NikPnevmatikos)\
   ○ [<img src="https://github.com/MaryDiam.png" width="60px;"/><br /><sub><a href="https://github.com/MaryDiam">MaryDiam</a></sub>](https://github.com/MaryDiam)\
   ○ [<img src="https://github.com/lefstefanou.png" width="60px;"/><br /><sub><a href="https://github.com/lefstefanou">LefterisStefanou</a></sub>](https://github.com/lefstefanou)\
-  ○ [<img src="https://github.com/katerinamilioti.png" width="60px;"/><br /><sub><a href="https://github.com/katerinamilioti">KaterinaMilioti</a></sub>](https://github.com/katerinamilioti)\
+  ○ [<img src="https://github.com/katerinamilioti.png" width="60px;"/><br /><sub><a href="https://github.com/katerinamilioti">KaterinaMilioti</a></sub>](https://github.com/katerinamilioti)
