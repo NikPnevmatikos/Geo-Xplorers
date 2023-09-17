@@ -28,14 +28,16 @@ Detailed documentation [README.pdf](./README.pdf)
   <a href="https://github.com/NikPnevmatikos">
     <img 
       style="margin-right: 10px;" 
-      src="https://github.com/NikPnevmatikos.png" width="60px;"/>
+      src="https://github.com/NikPnevmatikos.png" width="60px;"
       alt="NikPnevmatikos"
+    />
   </a>
   <a href="https://github.com/JohnKalesis1">
     <img 
       style="margin-right: 10px;" 
-      src="https://github.com/JohnKalesis1.png" width="60px;"/>
+      src="https://github.com/JohnKalesis1.png" width="60px;"
       alt="JohnKalesis"
+    />
   </a>
 </div>
 
