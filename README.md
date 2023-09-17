@@ -32,6 +32,7 @@ Detailed documentation [README.pdf](./README.pdf)
       alt="NikPnevmatikos"
     />
   </a>
+  <span>NikPnevmatikos</span>
   <a href="https://github.com/JohnKalesis1">
     <img 
       style="margin-right: 10px;" 
@@ -39,6 +40,7 @@ Detailed documentation [README.pdf](./README.pdf)
       alt="JohnKalesis"
     />
   </a>
+  <span>JohnKalesis</span>
 </div>
 
 ### Frontend
@@ -50,6 +52,7 @@ Detailed documentation [README.pdf](./README.pdf)
       alt="NikPnevmatikos"
     />
   </a>
+  <span>NikPnevmatikos</span>
   <a href="https://github.com/MaryDiam">
     <img 
       style="margin-right: 10px;" 
@@ -57,6 +60,7 @@ Detailed documentation [README.pdf](./README.pdf)
       alt="MaryDiam"
     />
   </a>
+  <span>MaryDiam</span>
     <a href="https://github.com/lefstefanou">
     <img 
       style="margin-right: 10px;" 
@@ -64,6 +68,7 @@ Detailed documentation [README.pdf](./README.pdf)
       alt="LefterisStefanou"
     />
   </a>
+  <span>LefterisStefanou</span>
     <a href="https://github.com/katerinamilioti">
     <img 
       style="margin-right: 10px;" 
@@ -71,6 +76,7 @@ Detailed documentation [README.pdf](./README.pdf)
       alt="KaterinaMilioti"
     />
   </a>
+  <span>KaterinaMilioti</span>
 </div>
 
 
