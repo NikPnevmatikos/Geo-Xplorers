@@ -21,9 +21,9 @@ Detailed documentation [README.pdf](./README.pdf)
 ## Implemented by CodeOfDuty team:
 
 ### Project Manager
-![<img src="https://github.com/NikPnevmatikos.png" width="60px;"/><br /><sub><a href="https://github.com/NikPnevmatikos">NikPnevmatikos</a></sub>](https://github.com/NikPnevmatikos)
+[<img src="https://github.com/NikPnevmatikos.png" width="60px;"/><br /><sub><a href="https://github.com/NikPnevmatikos">NikPnevmatikos</a></sub>](https://github.com/NikPnevmatikos)
 
 ### Backend
-![<img src="https://github.com/NikPnevmatikos.png" width="60px;"/><br /><sub><a href="https://github.com/NikPnevmatikos">NikPnevmatikos</a></sub>](https://github.com/NikPnevmatikos)  ![<img src="https://github.com/JohnKalesis1.png" width="60px;"/><br /><sub><a href="https://github.com/JohnKalesis1">JohnKalesis1</a></sub>](https://github.com/JohnKalesis1)
+[<img src="https://github.com/NikPnevmatikos.png" width="60px;"/><br /><sub><a href="https://github.com/NikPnevmatikos">NikPnevmatikos</a></sub>](https://github.com/NikPnevmatikos)  [<img src="https://github.com/JohnKalesis1.png" width="60px;"/><br /><sub><a href="https://github.com/JohnKalesis1">JohnKalesis1</a></sub>](https://github.com/JohnKalesis1)
 
 [![](https://contrib.rocks/image?repo=NikPnevmatikos/Geo-Xplorers)](https://github.com/NikPnevmatikos/webapp/graphs/Geo-Xplorers)
