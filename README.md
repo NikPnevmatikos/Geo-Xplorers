@@ -16,6 +16,7 @@ With its minimalistic interface, search features, personalized saved searches,
 and seamless integration with Google Maps, GeoXplorers offers a unique and
 user-friendly platform for users to explore and discover new exciting locations.
 
+Detailed documentation [ReadME.pdf](./ReadMe.pdf)
 
 Implemented by CodeOfDuty team:
 
