@@ -41,4 +41,37 @@ Detailed documentation [README.pdf](./README.pdf)
   </a>
 </div>
 
+### Frontend
+<div style="display: flex; flex-direction: row;">
+  <a href="https://github.com/NikPnevmatikos">
+    <img 
+      style="margin-right: 10px;" 
+      src="https://github.com/NikPnevmatikos.png" width="60px;"
+      alt="NikPnevmatikos"
+    />
+  </a>
+  <a href="https://github.com/MaryDiam">
+    <img 
+      style="margin-right: 10px;" 
+      src="https://github.com/MaryDiam.png" width="60px;"
+      alt="MaryDiam"
+    />
+  </a>
+    <a href="https://github.com/lefstefanou">
+    <img 
+      style="margin-right: 10px;" 
+      src="https://github.com/lefstefanou.png" width="60px;"
+      alt="LefterisStefanou"
+    />
+  </a>
+    <a href="https://github.com/katerinamilioti">
+    <img 
+      style="margin-right: 10px;" 
+      src="https://github.com/katerinamilioti.png" width="60px;"
+      alt="KaterinaMilioti"
+    />
+  </a>
+</div>
+
+
 [![](https://contrib.rocks/image?repo=NikPnevmatikos/Geo-Xplorers)](https://github.com/NikPnevmatikos/webapp/graphs/Geo-Xplorers)
