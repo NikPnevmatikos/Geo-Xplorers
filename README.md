@@ -17,7 +17,11 @@ and seamless integration with Google Maps, GeoXplorers offers a unique and
 user-friendly platform for users to explore and discover new exciting locations.
 
 
-[![](https://opencollective.com/html-react-parser/contributors.svg?width=890&button=false)](https://github.com/remarkablemark/html-react-parser/graphs/contributors)
+[![](https://contrib.rocks/image?repo=NikPnevmatikos/Geo-Xplorers)](https://github.com/NikPnevmatikos/Geo-Xplorers/graphs/contributors)
+
+<a href="https://github.com/NikPnevmatikos/webapp/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=NikPnevmatikos/webapp" />
+</a>
 
 Implemented by CodeOfDuty team:
 
