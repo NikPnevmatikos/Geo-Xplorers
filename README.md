@@ -24,7 +24,7 @@ Detailed documentation [README.pdf](./README.pdf)
 [<img src="https://github.com/NikPnevmatikos.png" width="60px;"/><br /><sub><a href="https://github.com/NikPnevmatikos">NikPnevmatikos</a></sub>](https://github.com/NikPnevmatikos)
 
 ### Backend
-<div style="display: flex; flex-direction: row;">
+<div style="display: flex; flex-direction: column; align-items:center;">
   <a href="https://github.com/NikPnevmatikos">
     <img 
       style="margin-right: 10px;" 
@@ -44,7 +44,7 @@ Detailed documentation [README.pdf](./README.pdf)
 </div>
 
 ### Frontend
-<div style="display: flex; flex-direction: row;">
+<div style="display: flex; flex-direction: column; align-items:center;">
   <a href="https://github.com/NikPnevmatikos">
     <img 
       style="margin-right: 10px;" 
