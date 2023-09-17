@@ -18,6 +18,22 @@ user-friendly platform for users to explore and discover new exciting locations.
 
 Implemented by CodeOfDuty team:
 
+```html
+<ul>
+  <li>Project Manager
+  	<ul>
+      <li>[<img src="https://github.com/NikPnevmatikos.png" width="60px;"/><sub><a href="https://github.com/NikPnevmatikos">NikPnevmatikos</a></sub>](https://github.com/NikPnevmatikos)</li>
+    </ul>
+  </li>
+  <li>Backend
+    <ul>
+      <li>[<img src="https://github.com/NikPnevmatikos.png" width="60px;"/><sub><a href="https://github.com/NikPnevmatikos">NikPnevmatikos</a></sub>](https://github.com/NikPnevmatikos)</li>
+      <li>[<img src="https://github.com/JohnKalesis1.png" width="60px;"/><br /><sub><a href="https://github.com/JohnKalesis1">JohnKalesis</a></sub>](https://github.com/JohnKalesis1)</li>
+    </ul>
+  </li>
+  <li>Frontend</li>
+</ul>
+```
 
 ● Project Manager
    
