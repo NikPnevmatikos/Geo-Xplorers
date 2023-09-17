@@ -21,7 +21,15 @@ Detailed documentation [README.pdf](./README.pdf)
 ## Implemented by CodeOfDuty team:
 
 ### Project Manager
-[<img src="https://github.com/NikPnevmatikos.png" width="60px;"/><br /><sub><a href="https://github.com/NikPnevmatikos">NikPnevmatikos</a></sub>](https://github.com/NikPnevmatikos)
+<div style="display: flex; flex-direction: row; align-items:center;">
+  <a href="https://github.com/NikPnevmatikos">
+    <img 
+      style="margin-right: 10px; " 
+      src="https://github.com/NikPnevmatikos.png" width="60px;"
+      alt="NikPnevmatikos"
+    />
+  </a>
+</div>
 
 ### Backend
 <div style="display: flex; flex-direction: row; align-items:center;">
@@ -32,7 +40,6 @@ Detailed documentation [README.pdf](./README.pdf)
       alt="NikPnevmatikos"
     />
   </a>
-  <span>NikPnevmatikos</span>
   <a href="https://github.com/JohnKalesis1">
     <img 
       style="margin-right: 10px;" 
@@ -40,7 +47,6 @@ Detailed documentation [README.pdf](./README.pdf)
       alt="JohnKalesis"
     />
   </a>
-  <span>JohnKalesis</span>
 </div>
 
 ### Frontend
@@ -52,7 +58,6 @@ Detailed documentation [README.pdf](./README.pdf)
       alt="NikPnevmatikos"
     />
   </a>
-  <span>NikPnevmatikos</span>
   <a href="https://github.com/MaryDiam">
     <img 
       style="margin-right: 10px;" 
@@ -60,7 +65,6 @@ Detailed documentation [README.pdf](./README.pdf)
       alt="MaryDiam"
     />
   </a>
-  <span>MaryDiam</span>
     <a href="https://github.com/lefstefanou">
     <img 
       style="margin-right: 10px;" 
@@ -68,7 +72,6 @@ Detailed documentation [README.pdf](./README.pdf)
       alt="LefterisStefanou"
     />
   </a>
-  <span>LefterisStefanou</span>
     <a href="https://github.com/katerinamilioti">
     <img 
       style="margin-right: 10px;" 
@@ -76,8 +79,5 @@ Detailed documentation [README.pdf](./README.pdf)
       alt="KaterinaMilioti"
     />
   </a>
-  <span>KaterinaMilioti</span>
 </div>
 
-
-[![](https://contrib.rocks/image?repo=NikPnevmatikos/Geo-Xplorers)](https://github.com/NikPnevmatikos/webapp/graphs/Geo-Xplorers)
