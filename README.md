@@ -24,7 +24,7 @@ Detailed documentation [README.pdf](./README.pdf)
 <div style="display: flex; flex-direction: row; align-items:center;">
   <a href="https://github.com/NikPnevmatikos">
     <img 
-      style="margin-right: 10px; border-radius: 50%; width: 100px; height: 100px;" 
+      style="margin-right: 10px; border-radius: 50px;" 
       src="https://github.com/NikPnevmatikos.png" width="60px;"
       alt="NikPnevmatikos"
     />
