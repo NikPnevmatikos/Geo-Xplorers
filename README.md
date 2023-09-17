@@ -16,6 +16,9 @@ With its minimalistic interface, search features, personalized saved searches,
 and seamless integration with Google Maps, GeoXplorers offers a unique and
 user-friendly platform for users to explore and discover new exciting locations.
 
+
+[![](https://opencollective.com/html-react-parser/contributors.svg?width=890&button=false)](https://github.com/remarkablemark/html-react-parser/graphs/contributors)
+
 Implemented by CodeOfDuty team:
 
 ● Project Manager
