@@ -27,12 +27,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import { UserContext } from "../App";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Loader from "./Loader";
 
 function Map(props) {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    // googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-    googleMapsApiKey: "AIzaSyBZ1a96JQbH-jmgz79ItO2cGlIxv2luZNI",
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
   });
 
   const {
@@ -65,6 +65,8 @@ function Map(props) {
   const [circleInstance, setCircleInstance] = useState(null);
   const [mapCenter, setMapCenter] = useState({ lat: 37.98381, lng: 23.727539 });
   const [user, setUser] = useContext(UserContext);
+
+  const [loading, setLoading] = useState(false)
 
   const handleRadiusChange = (event) => {
     setRadius(parseInt(event.target.value, 10)); // Update the radius value
@@ -107,7 +109,7 @@ function Map(props) {
 
   async function getCategories() {
     await axios
-      .get("http://localhost:8000/api/categories/")
+      .get("/api/categories/")
       .then((response) => {
         setCategories(response.data);
       })
@@ -139,8 +141,10 @@ function Map(props) {
       (keywordParam && keywordParam != "") ||
       (radlat && radlat != "" && radlng && radlng != "" && radkm && radkm != "")
     ) {
+      setLoading(true)
       apiSearch();
-    } else {
+    } else if(paramId && paramId != ""){
+      setLoading(true)
       apiSearchById();
     }
   }, [text, catParam, keywordParam, radlat, radlng, radkm, paramId]);
@@ -164,7 +168,7 @@ function Map(props) {
       }
 
       const { data } = await axios.post(
-        `http://localhost:8000/api/search/pois/?pk=${paramId}`,
+        `/api/search/pois/?pk=${paramId}`,
         {},
         config
       );
@@ -180,6 +184,7 @@ function Map(props) {
       }));
       setPoints(points);
 
+      setLoading(false)
       // If there are no results, display an error message
       if (response.length === 0) {
         toast("No results found", { type: "error" });
@@ -188,6 +193,7 @@ function Map(props) {
 
       // If there is an error, set the state of points to an empty array
     } catch (error) {
+      setLoading(false)
       setPoints([]);
     }
   }
@@ -203,7 +209,7 @@ function Map(props) {
       if (keywordParam && keywordParam != "") {
         selectedKey = keywordParam.split(",");
       }
-      console.log(selected, selectedKey);
+
       let selectedDistance = {};
       if (
         radlat &&
@@ -246,7 +252,7 @@ function Map(props) {
       }
 
       const { data } = await axios.post(
-        "http://localhost:8000/api/search/pois/",
+        "/api/search/pois/",
         requestBody,
         config
       );
@@ -262,6 +268,8 @@ function Map(props) {
       }));
       setPoints(points);
 
+      setLoading(false)
+
       // If there are no results, display an error message
       if (response.length === 0) {
         toast("No results found", { type: "error" });
@@ -270,6 +278,7 @@ function Map(props) {
 
       // If there is an error, set the state of points to an empty array
     } catch (error) {
+      setLoading(false)
       setPoints([]);
     }
   }
@@ -295,7 +304,7 @@ function Map(props) {
 
       // Send a POST request to save the search with the image data
       const { data } = await axios.post(
-        "http://localhost:8000/api/search/image/30/",
+        "/api/search/image/30/",
         form,
         config
       );
@@ -332,6 +341,8 @@ function Map(props) {
 
   return isLoaded ? (
     <div>
+      <Loader isActive={loading} />
+
       <Modal
         open={modalOpen}
         onClose={handleModalClose}
@@ -341,7 +352,7 @@ function Map(props) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          //overflowY: "scroll",
+
         }}
       >
         <div

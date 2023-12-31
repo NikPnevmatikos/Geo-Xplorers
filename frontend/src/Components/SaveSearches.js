@@ -70,13 +70,13 @@ export default function Save_Searches() {
           },
         };
         const response = await axios.delete(
-          `http://localhost:8000/api/searches/?pk=${selectedItemId}`,
+          `/api/searches/?pk=${selectedItemId}`,
           config
         );
 
         const responseData = response.data;
 
-        console.log(responseData);
+
         setData(responseData);
         setDeleted(true);
         console.log("Deleted successfully");
@@ -126,13 +126,13 @@ export default function Save_Searches() {
           },
         };
         const response = await axios.get(
-          "http://localhost:8000/api/searches/?type=saved",
+          "/api/searches/?type=saved",
           config
         );
 
         const responseData = response.data;
 
-        console.log(responseData);
+
         setData(responseData);
         setIsLoading(false);
       } catch (error) {
@@ -184,7 +184,7 @@ export default function Save_Searches() {
                 sx={{
                   minWidth: 800,
                   maxWidth: 800,
-                  maxHeight: 250,
+                  maxHeight: 'auto',
                   minHeight: 250,
                   backgroundColor: "white",
                   boxShadow: "5px 10px 10px rgba(2, 128, 144, 0.2)",
@@ -258,7 +258,7 @@ export default function Save_Searches() {
                       component="img"
                       className="card_img"
                       sx={{ width: 300, height: 170 }}
-                      image={`http://localhost:8000${item.image}`}
+                      image={`${item.image ?? "/genericMap.png"}`}
                       alt="Image Alt Text"
                     />
                   </CardActionArea>

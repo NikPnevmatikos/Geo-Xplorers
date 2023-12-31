@@ -47,7 +47,7 @@ function Header(props) {
     savedSearchId,
   } = props;
 
-  console.log(props);
+
   const [searchTerm, setSearchTerm] = useState("");
 
   const [user, SetUser] = useContext(UserContext);
@@ -70,7 +70,7 @@ function Header(props) {
 
   const handleInputChange = (event) => {
     setSearchTerm(event.target.value);
-    //props.setSearchV(event.target.value);
+
   };
 
   const handleFormSubmit = (event) => {
@@ -100,7 +100,7 @@ function Header(props) {
           },
         };
         const { data } = await axios.post(
-          `http://localhost:8000/api/searches/?pk=${savedSearchId}`,
+          `/api/searches/?pk=${savedSearchId}`,
           {},
           config
         );
@@ -176,9 +176,7 @@ function Header(props) {
             </li>
             {user ? (
               <li className="nav-item" style={{ width: "130px" }}>
-                {/* <a className="nav-link" href="">
-                <MdOutlineSaveAlt /> Save Search
-              </a> */}
+
                 <button
                   className="search-button"
                   type="button"

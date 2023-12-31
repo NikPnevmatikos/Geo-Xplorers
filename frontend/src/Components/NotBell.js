@@ -19,8 +19,6 @@ export default function NotBell() {
           theme={theme}
           locale="en"
           bellCounter="unread"
-          // userExternalId= {`Bearer ${user.token}`}
-          // userKey={`Bearer ${user.token}`}
         >
           {(props) => (
             <FloatingNotificationInbox
@@ -38,7 +36,6 @@ export default function NotBell() {
 const theme = {
   header: {
     fontFamily: "inherit",
-      // backgroundColor: "rgb(99, 161, 171, 1)",
     textColor: "rgb(99, 161, 171, 1)",
     fontSize: "17px",
     borderRadius: "9px",

@@ -1,18 +1,14 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import "../Styles/Header.css";
-import { Container, Form } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 import "../App.css";
 import "../Styles/Login.css";
 import axios from 'axios';
 import { UserContext } from '../App';
 import { useNavigate } from 'react-router-dom';
 import { MdArrowBack } from 'react-icons/md';
+import Loader from '../Components/Loader';
 
-// // Create a new context for authentication
-// const AuthContext = React.createContext();
-
-// // Custom hook for using the authentication context
-// const useAuth = () => useContext(AuthContext);
 
 function RegisterScreen() {
 
@@ -22,6 +18,8 @@ function RegisterScreen() {
   const [lastName, setLastName] = useState('');
   const [mail, setMail] = useState('');
   const [user, SetUser] = useContext(UserContext);
+
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate();
  
   /**
@@ -30,6 +28,7 @@ function RegisterScreen() {
    * The parameter `e` is preventing the page from refreshing when the form is submitted.
    */
   const register = async(e) => {
+    setLoading(true)
     e.preventDefault();
     try {
         const config = {
@@ -38,7 +37,7 @@ function RegisterScreen() {
             }
         }
         const { data } = await axios.post(
-            'http://127.0.0.1:8000/api/user/',
+            '/api/user/',
             { 
             'username': username,
             'password': password,
@@ -53,10 +52,11 @@ function RegisterScreen() {
 
         // put user in local storage
         localStorage.setItem("User", JSON.stringify(data));
+        setLoading(false)
         navigate('/');
-        window.alert("Successful Registration!");
     } 
     catch (error) {
+        setLoading(false)
         window.alert(error)
     }
   }
@@ -68,6 +68,8 @@ function RegisterScreen() {
 
   return (
     <div>
+
+        <Loader isActive={loading}/>
         <Container className="login-container" style={{paddingBottom: "950px"}}>
         
         <button className="back-button" onClick={handleBack}>

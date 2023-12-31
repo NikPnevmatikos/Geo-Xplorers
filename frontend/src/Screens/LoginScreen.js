@@ -7,12 +7,15 @@ import axios from 'axios';
 import { UserContext } from '../App';
 import { useNavigate } from 'react-router-dom';
 import { MdLogin, MdArrowBack } from 'react-icons/md'
+import Loader from '../Components/Loader';
 
 function LoginScreen() {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, SetUser] = useContext(UserContext);
+
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate();
 
   /**
@@ -21,6 +24,7 @@ function LoginScreen() {
   * when the form is submitted.
   */
   const login = async(e) => {
+    setLoading(true)
     e.preventDefault();
     try {
       const config = {
@@ -29,7 +33,7 @@ function LoginScreen() {
         }
       }
       const { data } = await axios.post(
-        'http://127.0.0.1:8000/api/login/',
+        '/api/login/',
         { 
           'username': username,
           'password': password  
@@ -40,11 +44,14 @@ function LoginScreen() {
       SetUser(data)
       // put user in local storage
       localStorage.setItem("User", JSON.stringify(data));
-      console.log(data);
+
+      setLoading(false)
       navigate('/');
-      window.alert("Successful Log In!");
+      
     } 
     catch (error) {
+      setLoading(false)
+      console.log(error)
       window.alert("Wrong username or password. \nPlease, try again.")
     }
   }
@@ -56,6 +63,8 @@ function LoginScreen() {
 
   return (
     <div>
+
+      <Loader isActive={loading}/>
 
       <Container className="login-container">
           

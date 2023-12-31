@@ -22,9 +22,6 @@ function App() {
 
   const [mapAction, setMapAction] = useState(false);
 
-  // const handleSearchApp = () => {
-  //   setSearchTerm(searchTerm);
-  // };
 
   const [visible, setVisible] = useState(false);
   const [radius, setRadius] = useState(10000);
@@ -62,10 +59,7 @@ function App() {
     }
   }, []);
 
-  //useEffect pou 8a koitaei to local storage kai an uparxei, setUser
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
+
   return (
     <div className="layout">
       <UserContext.Provider value={[user, setUser]}>

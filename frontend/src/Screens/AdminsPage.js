@@ -39,11 +39,11 @@ function AdminsPage() {
                 }
             }
             const { data } = await axios.get(
-                "http://localhost:8000/api/get/pois/",
+                "/api/get/pois/",
                 config
             )
             setLoading(false);
-            // console.log(data);
+
             setPois(data);
         } catch (error) {
             setLoading(false);
@@ -60,11 +60,11 @@ function AdminsPage() {
                 }
             }
             const { data } = await axios.get(
-                "http://localhost:8000/api/categories/",
+                "/api/categories/",
                 config
             )
             setLoading(false);
-            console.log(data);
+
             setCtgs(data);
         } catch (error) {
             setLoading(false);
@@ -77,7 +77,7 @@ function AdminsPage() {
     useEffect(() => {
         if ((user && user.is_staff === false)) {
             navigate('/');
-            console.log("user is staff bich ",user);
+
         }
         else if (user) {
             setLoading(true);
@@ -94,7 +94,6 @@ function AdminsPage() {
     const upload = (e) => {
         const file = e.target.files[0];
         setFile(file);
-        // setPreview(URL.createObjectURL(file))
     }
 
     /**
@@ -118,14 +117,14 @@ function AdminsPage() {
             
             if (isPoi) {
                 const { data } = await axios.post(
-                    "http://localhost:8000/api/import/pois/",
+                    "/api/import/pois/",
                     form,
                     config
                 )
             }
             else {
                 const { data } = await axios.post(
-                    "http://localhost:8000/api/import/categories/",
+                    "/api/import/categories/",
                     form,
                     config
                 )
@@ -282,20 +281,7 @@ function AdminsPage() {
                                                 return(
                                                     <tr key={ctg._id}>
                                                         <th scope="row">{ctg.name}</th>
-                                                        {/* <td>{poi.latitude}, {poi.longitude}</td>
-                                                        <td>
-                                                            {poi.categories.map((category, index)=> {
-                                                                const isLastElement = index === poi.categories.length - 1;
-                                                                const comma = isLastElement ? '' : ', ';
-                                                                return <text>{category.name}{comma}</text>;
-                                                            })}
-                                                        </td>
-                                                        <td>
-                                                            {poi.keywords.map((keyword, index)=> {
-                                                                const isLastElement = index === poi.keywords.length - 1;
-                                                                const comma = isLastElement ? '' : ', ';
-                                                                return <text>{keyword.keyword}{comma}</text>;
-                                                            })}</td> */}
+
                                                     </tr>
                                                 )
                                             })
